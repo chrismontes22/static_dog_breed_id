@@ -29,7 +29,6 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -38,410 +37,223 @@
       color: var(--cream);
       min-height: 100vh;
       padding: 32px 16px 64px;
-      background-image:
-        radial-gradient(ellipse 60% 40% at 50% -10%, rgba(232,164,74,0.06) 0%, transparent 70%);
+      background-image: radial-gradient(ellipse 60% 40% at 50% -10%, rgba(232,164,74,0.06) 0%, transparent 70%);
     }
 
-    /* ── CONTAINER ──────────────────────────── */
     .wrap { max-width: 680px; margin: 0 auto; }
 
-    /* ── HEADER ─────────────────────────────── */
+    /* ── HEADER ── */
     header { text-align: center; margin-bottom: 40px; }
-
     header .eyebrow {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 12px;
-      opacity: 0.8;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 12px; opacity: 0.8;
     }
-
     header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 700;
-      color: var(--cream);
-      line-height: 1.15;
-      letter-spacing: -0.02em;
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+      color: var(--cream); line-height: 1.15; letter-spacing: -0.02em;
     }
+    header h1 em { font-style: italic; color: var(--amber); }
+    header p { color: var(--muted); font-size: 0.9rem; margin-top: 12px; font-style: italic; }
 
-    header h1 em {
-      font-style: italic;
-      color: var(--amber);
-    }
-
-    header p {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-top: 12px;
-      font-family: 'Lora', serif;
-      font-style: italic;
-    }
-
-    /* ── CONFIG ─────────────────────────────── */
+    /* ── CONFIG ── */
     .config-bar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      user-select: none;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--muted);
-      transition: color 0.2s;
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 8px; margin-bottom: 20px; cursor: pointer; user-select: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); transition: color 0.2s;
     }
     .config-bar:hover { color: var(--amber); }
     .config-bar .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--amber-dim);
-      transition: background 0.2s;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--amber-dim); transition: background 0.2s;
     }
     .config-bar:hover .dot { background: var(--amber); }
-
     .config-drawer {
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: var(--r);
-      padding: 20px;
-      margin-bottom: 24px;
-      display: none;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: var(--r); padding: 20px; margin-bottom: 24px; display: none;
     }
     .config-drawer.open { display: block; }
-
     .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
     .cfg-group label {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 5px;
+      display: block; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted); margin-bottom: 5px;
     }
-
-    .cfg-note {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 12px;
-      font-style: italic;
-    }
+    .cfg-note { font-size: 0.75rem; color: var(--muted); margin-top: 12px; font-style: italic; }
     .cfg-note a { color: var(--amber); }
 
-    /* ── CARD ───────────────────────────────── */
+    /* ── CARD ── */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 24px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 24px; margin-bottom: 16px;
+      position: relative; overflow: hidden;
     }
-
     .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
       background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
       opacity: 0.4;
     }
-
     .step-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--amber);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--amber); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
     }
+    .step-label::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
 
-    .step-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border2);
-    }
-
-    /* ── INPUTS ─────────────────────────────── */
-    input[type="text"],
-    input[type="password"],
-    select {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border2);
-      border-radius: 6px;
-      padding: 9px 13px;
-      color: var(--cream);
-      font-size: 0.88rem;
-      font-family: 'Lora', serif;
-      outline: none;
+    /* ── INPUTS ── */
+    input[type="text"], input[type="password"], select {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 6px; padding: 9px 13px; color: var(--cream);
+      font-size: 0.88rem; font-family: 'Lora', serif; outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-
     input:focus, select:focus {
       border-color: var(--amber-dim);
       box-shadow: 0 0 0 3px var(--amber-glow);
     }
-
     select option { background: var(--surface2); }
 
-    /* ── BUTTONS ────────────────────────────── */
+    /* ── BUTTONS ── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 22px;
-      border-radius: 6px;
-      border: none;
-      font-size: 0.85rem;
-      font-family: 'Lora', serif;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 22px; border-radius: 6px; border: none;
+      font-size: 0.85rem; font-family: 'Lora', serif; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
     }
-
-    .btn-primary {
-      background: var(--amber);
-      color: #1A1814;
-      font-weight: 600;
-    }
+    .btn-primary { background: var(--amber); color: #1A1814; font-weight: 600; }
     .btn-primary:hover { background: #F0B660; transform: translateY(-1px); }
     .btn-primary:active { transform: none; }
-    .btn-primary:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border2);
-    }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
     .btn-ghost:hover { color: var(--cream); border-color: var(--muted); }
 
-    /* ── UPLOAD ZONE ────────────────────────── */
+    /* ── UPLOAD ZONE ── */
     .upload-zone {
-      border: 1px dashed var(--border2);
-      border-radius: 10px;
-      padding: 52px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s;
-      background: var(--surface2);
+      border: 1px dashed var(--border2); border-radius: 10px;
+      padding: 52px 24px; text-align: center; cursor: pointer;
+      transition: all 0.25s; background: var(--surface2);
     }
-
-    .upload-zone:hover,
-    .upload-zone.over {
-      border-color: var(--amber-dim);
-      background: var(--amber-glow);
+    .upload-zone:hover, .upload-zone.over {
+      border-color: var(--amber-dim); background: var(--amber-glow);
     }
-
-    .upload-icon {
-      font-size: 2.8rem;
-      display: block;
-      margin-bottom: 12px;
-      opacity: 0.6;
-    }
-
+    .upload-icon { font-size: 2.8rem; display: block; margin-bottom: 12px; opacity: 0.6; }
     .upload-zone p { color: var(--muted); font-size: 0.85rem; font-style: italic; }
     .upload-zone strong { color: var(--cream); font-style: normal; }
 
-    /* ── IMAGE PREVIEW ──────────────────────── */
-    .img-wrap {
-      position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-      background: var(--surface2);
-    }
-    .img-wrap img {
-      width: 100%;
-      max-height: 340px;
-      object-fit: contain;
-      display: block;
-    }
+    /* ── IMAGE PREVIEW ── */
+    .img-wrap { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface2); }
+    .img-wrap img { width: 100%; max-height: 340px; object-fit: contain; display: block; }
     .img-wrap .clear-btn {
-      position: absolute;
-      top: 10px; right: 10px;
-      background: rgba(0,0,0,0.7);
-      border: none;
-      color: var(--cream);
-      border-radius: 50%;
-      width: 30px; height: 30px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      display: flex; align-items: center; justify-content: center;
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(0,0,0,0.7); border: none; color: var(--cream);
+      border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
+      font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
       transition: background 0.2s;
     }
     .img-wrap .clear-btn:hover { background: rgba(0,0,0,0.9); }
 
-    /* ── BREED OPTIONS ──────────────────────── */
-    .breeds { display: flex; flex-direction: column; gap: 8px; }
+    /* ── MODEL LOAD PROGRESS ── */
+    .model-load {
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 14px 16px; margin-top: 14px;
+    }
+    .model-load-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .model-load-header span:last-child { color: var(--amber); }
+    .progress-track {
+      height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+      border-radius: 2px; transition: width 0.3s ease;
+    }
+    .model-load-sub {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+      color: var(--muted); margin-top: 6px; font-style: italic;
+    }
 
+    /* ── BREED OPTIONS ── */
+    .breeds { display: flex; flex-direction: column; gap: 8px; }
     .breed-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 13px 16px;
-      border: 1px solid var(--border2);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.18s;
-      background: var(--surface2);
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 16px; border: 1px solid var(--border2);
+      border-radius: 8px; cursor: pointer; transition: all 0.18s; background: var(--surface2);
     }
     .breed-row:hover { border-color: var(--amber-dim); }
-    .breed-row.picked {
-      border-color: var(--amber);
-      background: var(--amber-glow);
-    }
-
+    .breed-row.picked { border-color: var(--amber); background: var(--amber-glow); }
     .breed-row input[type="radio"] { accent-color: var(--amber); }
-
     .breed-info { flex: 1; min-width: 0; }
-    .breed-name-text {
-      font-size: 0.95rem;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .breed-name-text { font-size: 0.95rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .breed-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 5px; overflow: hidden; }
     .breed-fill { height: 100%; background: linear-gradient(90deg, var(--amber-dim), var(--amber)); border-radius: 2px; transition: width 0.5s ease; }
-    .breed-pct {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--muted);
-      flex-shrink: 0;
-    }
+    .breed-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); flex-shrink: 0; }
 
-    /* ── CUSTOM BREED INPUT ─────────────────── */
-    .custom-input-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
+    /* ── CUSTOM BREED INPUT ── */
+    .custom-input-row { display: flex; gap: 8px; margin-top: 10px; }
     .custom-input-row input { flex: 1; }
 
-    /* ── PIPELINE ───────────────────────────── */
+    /* ── PIPELINE ── */
     .pipeline { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-
     .pipe-step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 0;
-      font-size: 0.82rem;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      border-left: 2px solid transparent;
-      padding-left: 12px;
-      transition: all 0.2s;
+      display: flex; align-items: center; gap: 10px; padding: 7px 0;
+      font-size: 0.82rem; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+      border-left: 2px solid transparent; padding-left: 12px; transition: all 0.2s;
     }
-
-    .pipe-step.active {
-      color: var(--amber);
-      border-left-color: var(--amber);
-    }
-    .pipe-step.done {
-      color: var(--green);
-      border-left-color: var(--green);
-    }
-    .pipe-step.fail {
-      color: var(--red);
-      border-left-color: var(--red);
-    }
-
+    .pipe-step.active { color: var(--amber); border-left-color: var(--amber); }
+    .pipe-step.done   { color: var(--green); border-left-color: var(--green); }
+    .pipe-step.fail   { color: var(--red);   border-left-color: var(--red);   }
     .pipe-icon { width: 18px; text-align: center; flex-shrink: 0; }
 
-    /* ── SPINNER ────────────────────────────── */
+    /* ── SPINNER ── */
     .spin {
-      width: 14px; height: 14px;
-      border: 2px solid currentColor;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: rot 0.55s linear infinite;
-      display: inline-block;
+      width: 14px; height: 14px; border: 2px solid currentColor;
+      border-top-color: transparent; border-radius: 50%;
+      animation: rot 0.55s linear infinite; display: inline-block;
     }
     @keyframes rot { to { transform: rotate(360deg); } }
 
-    /* ── ANSWER ─────────────────────────────── */
+    /* ── ANSWER ── */
     .answer-bubble {
-      background: var(--surface2);
-      border-radius: 10px;
-      padding: 18px 20px;
-      font-size: 0.93rem;
-      line-height: 1.8;
-      white-space: pre-wrap;
+      background: var(--surface2); border-radius: 10px; padding: 18px 20px;
+      font-size: 0.93rem; line-height: 1.8; white-space: pre-wrap;
       border-left: 3px solid var(--amber-dim);
     }
-
     .source-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 3px 10px;
-      border-radius: 20px;
+      display: inline-flex; align-items: center; gap: 5px; margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 3px 10px; border-radius: 20px;
     }
-    .source-tag.kb {
-      background: rgba(124,106,247,0.15);
-      color: #A094F0;
-    }
-    .source-tag.web {
-      background: rgba(122,174,208,0.15);
-      color: var(--blue);
-    }
+    .source-tag.kb  { background: rgba(124,106,247,0.15); color: #A094F0; }
+    .source-tag.web { background: rgba(122,174,208,0.15); color: var(--blue); }
 
-    /* ── INLINE MESSAGES ────────────────────── */
+    /* ── INLINE MESSAGES ── */
     .msg {
-      padding: 11px 14px;
-      border-radius: 7px;
-      font-size: 0.84rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      padding: 11px 14px; border-radius: 7px; font-size: 0.84rem;
+      display: flex; align-items: center; gap: 8px;
     }
     .msg.loading {
-      background: rgba(232,164,74,0.08);
-      border: 1px solid rgba(232,164,74,0.2);
-      color: var(--amber);
+      background: rgba(232,164,74,0.08); border: 1px solid rgba(232,164,74,0.2); color: var(--amber);
     }
     .msg.err {
-      background: rgba(224,112,112,0.1);
-      border: 1px solid rgba(224,112,112,0.25);
-      color: var(--red);
+      background: rgba(224,112,112,0.1); border: 1px solid rgba(224,112,112,0.25); color: var(--red);
     }
 
-    /* ── ROW HELPERS ─────────────────────────── */
-    .row-right { display: flex; justify-content: flex-end; margin-top: 16px; }
-    .row-between { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-    .q-row { display: flex; gap: 8px; }
-    .q-row input { flex: 1; }
-
-    /* ── SEPARATOR ──────────────────────────── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 18px 0;
-    }
-
-    /* ── UTIL ───────────────────────────────── */
-    .hidden { display: none !important; }
-    .mt8 { margin-top: 8px; }
+    /* ── ROW HELPERS ── */
+    .row-right    { display: flex; justify-content: flex-end; margin-top: 16px; }
+    .row-between  { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .q-row        { display: flex; gap: 8px; }
+    .q-row input  { flex: 1; }
+    .divider      { height: 1px; background: var(--border); margin: 18px 0; }
+    .hidden       { display: none !important; }
+    .mt8  { margin-top: 8px; }
     .mt12 { margin-top: 12px; }
     .mt16 { margin-top: 16px; }
   </style>
@@ -496,7 +308,7 @@
 
     <div class="upload-zone" id="drop-zone"
          onclick="document.getElementById('file-in').click()"
-         ondragover="ev.preventDefault();this.classList.add('over')"
+         ondragover="event.preventDefault();this.classList.add('over')"
          ondragleave="this.classList.remove('over')"
          ondrop="handleDrop(event)">
       <span class="upload-icon">🐾</span>
@@ -510,6 +322,18 @@
     </div>
 
     <input type="file" id="file-in" accept="image/*" class="hidden" onchange="onFileChosen(event)">
+
+    <!-- Model loading progress (shown during first classify) -->
+    <div class="model-load hidden" id="model-load-box">
+      <div class="model-load-header">
+        <span id="model-load-label">Loading model…</span>
+        <span id="model-load-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="model-load-bar"></div>
+      </div>
+      <div class="model-load-sub" id="model-load-sub">Fetching dogmodel.onnx…</div>
+    </div>
 
     <div class="row-right hidden" id="classify-row">
       <button class="btn btn-primary" id="classify-btn" onclick="doClassify()">
@@ -549,7 +373,6 @@
   <!-- STEP 4: ANSWER -->
   <div class="card hidden" id="answer-card">
     <div class="step-label">Step 4 — Answer</div>
-
     <div class="pipeline" id="pipeline">
       <div class="pipe-step" id="ps-rel">
         <span class="pipe-icon">🔍</span> Checking question relevance…
@@ -564,12 +387,10 @@
         <span class="pipe-icon">✦</span> Synthesising answer…
       </div>
     </div>
-
     <div id="answer-body" class="hidden">
       <div class="answer-bubble" id="answer-text"></div>
       <div id="source-tag"></div>
     </div>
-
     <div class="msg err hidden" id="answer-err"></div>
   </div>
 
@@ -577,20 +398,21 @@
 
 <!-- ───────────────────────────────────────────────────────── -->
 <script type="module">
+
 // ──────────────────────────────────────────────────
 // CONFIGURATION & GLOBALS
 // ──────────────────────────────────────────────────
 const cfg = () => ({
-  geminiKey:  document.getElementById('c-gemini-key').value.trim(),
-  tavilyKey:  document.getElementById('c-tavily-key').value.trim(),
-  model:      document.getElementById('c-model').value.trim() || 'gemini-2.0-flash',
-  search:     document.getElementById('c-search').value,
+  geminiKey: document.getElementById('c-gemini-key').value.trim(),
+  tavilyKey: document.getElementById('c-tavily-key').value.trim(),
+  model:     document.getElementById('c-model').value.trim() || 'gemini-2.0-flash',
+  search:    document.getElementById('c-search').value,
 });
 
 const BREED_NICKNAMES = {
-  'Xoloitzcuintli':           ' (Mexican Hairless)',
+  'Xoloitzcuintli':             ' (Mexican Hairless)',
   'Staffordshire-Bull-Terrier': ' (Pitbull)',
-  'Pembroke-Welsh-Corgi':     ' (Corgi)',
+  'Pembroke-Welsh-Corgi':       ' (Corgi)',
 };
 
 function breedDisplay(raw) {
@@ -601,20 +423,17 @@ let ort_session = null;
 let labels      = [];
 let vectorDB    = null;
 let embedder_fn = null;
-let selectedRaw = null;  // raw label string
-let currentImg  = null;  // HTMLImageElement
+let selectedRaw = null;
+let currentImg  = null;
 
 // ──────────────────────────────────────────────────
 // INIT
 // ──────────────────────────────────────────────────
 async function init() {
   loadConfig();
-
-  // Set WASM path to CDN so we don't need local files
   ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/';
-
   await fetchLabels();
-  fetchVectorDB();  // background
+  fetchVectorDB(); // background
 }
 
 async function fetchLabels() {
@@ -635,22 +454,116 @@ async function fetchVectorDB() {
   }
 }
 
+// ──────────────────────────────────────────────────
+// MODEL LOADING — split ONNX support
+//
+// ONNX Runtime Web cannot resolve a companion .onnx.data
+// file on its own when given a path string. We must:
+//   1. Fetch dogmodel.onnx  → ArrayBuffer (the model graph)
+//   2. Fetch dogmodel.onnx.data → ArrayBuffer (the weights)
+//   3. Pass both to InferenceSession.create via `externalData`
+//
+// The `externalData` array tells ORT where to find each
+// external weight blob. The `path` field must match exactly
+// what the .onnx file's ExternalData entries reference
+// (usually just the bare filename, e.g. "dogmodel.onnx.data").
+// ──────────────────────────────────────────────────
 async function loadORT() {
   if (ort_session) return ort_session;
-  ort_session = await ort.InferenceSession.create('dogmodel.onnx', {
-    executionProviders: ['wasm'],
-  });
-  return ort_session;
-}
 
-async function getEmbedder() {
-  if (embedder_fn) return embedder_fn;
-  const { pipeline, env } = await import(
-    'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1'
-  );
-  env.allowLocalModels = false;
-  embedder_fn = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-  return embedder_fn;
+  // Show progress UI
+  show('model-load-box');
+  const bar    = document.getElementById('model-load-bar');
+  const pctEl  = document.getElementById('model-load-pct');
+  const subEl  = document.getElementById('model-load-sub');
+  const lblEl  = document.getElementById('model-load-label');
+
+  function setProgress(pct, sub) {
+    bar.style.width  = `${pct}%`;
+    pctEl.textContent = `${Math.round(pct)}%`;
+    if (sub) subEl.textContent = sub;
+  }
+
+  // ── Fetch with streaming progress ──────────────
+  async function fetchWithProgress(url, label, startPct, endPct) {
+    lblEl.textContent = label;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+
+    const total  = parseInt(res.headers.get('content-length') || '0', 10);
+    const reader = res.body.getReader();
+    const chunks = [];
+    let loaded   = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      loaded += value.length;
+      if (total > 0) {
+        const pct = startPct + ((loaded / total) * (endPct - startPct));
+        setProgress(pct, `${label} — ${(loaded / 1024 / 1024).toFixed(1)} MB`);
+      } else {
+        // Unknown size — animate between start/end
+        const approxPct = Math.min(endPct - 1, startPct + ((endPct - startPct) * 0.9));
+        setProgress(approxPct, `${label} — ${(loaded / 1024 / 1024).toFixed(1)} MB`);
+      }
+    }
+
+    // Concatenate chunks into a single ArrayBuffer
+    const totalBytes = chunks.reduce((n, c) => n + c.length, 0);
+    const buffer     = new Uint8Array(totalBytes);
+    let offset       = 0;
+    for (const chunk of chunks) {
+      buffer.set(chunk, offset);
+      offset += chunk.length;
+    }
+    setProgress(endPct);
+    return buffer.buffer;
+  }
+
+  try {
+    // Step 1 — fetch the model graph (.onnx)  [0 → 15%]
+    const modelBuffer = await fetchWithProgress(
+      'dogmodel.onnx',
+      'Loading model graph',
+      0, 15
+    );
+
+    // Step 2 — fetch the weight data (.onnx.data)  [15 → 90%]
+    const dataBuffer = await fetchWithProgress(
+      'dogmodel.onnx.data',
+      'Loading model weights',
+      15, 90
+    );
+
+    // Step 3 — create the session  [90 → 100%]
+    setProgress(90, 'Initialising runtime…');
+    lblEl.textContent = 'Initialising ONNX Runtime…';
+
+    ort_session = await ort.InferenceSession.create(
+      modelBuffer,           // pass the .onnx file as an ArrayBuffer
+      {
+        executionProviders: ['wasm'],
+        externalData: [
+          {
+            // `path` must match the filename stored inside the .onnx model's
+            // ExternalData field — typically the bare filename with no directory.
+            path: 'dogmodel.onnx.data',
+            data: dataBuffer,    // the pre-fetched weight ArrayBuffer
+          }
+        ],
+      }
+    );
+
+    setProgress(100, 'Model ready ✓');
+    setTimeout(() => hide('model-load-box'), 800);
+    return ort_session;
+
+  } catch (e) {
+    hide('model-load-box');
+    throw new Error(`Model failed to load: ${e.message}`);
+  }
 }
 
 // ──────────────────────────────────────────────────
@@ -670,9 +583,9 @@ function preprocessImage(img) {
   for (let h = 0; h < 224; h++) {
     for (let w = 0; w < 224; w++) {
       const px = (h * 224 + w) * 4;
-      for (let c = 0; c < 3; c++) {
-        buf[c * 224 * 224 + h * 224 + w] =
-          (data[px + c] / 255 - mean[c]) / std[c];
+      for (let ch = 0; ch < 3; ch++) {
+        buf[ch * 224 * 224 + h * 224 + w] =
+          (data[px + ch] / 255 - mean[ch]) / std[ch];
       }
     }
   }
@@ -689,7 +602,6 @@ async function classify(img) {
   const out     = await session.run({ input: tensor });
   const logits  = Array.from(out[Object.keys(out)[0]].data);
 
-  // Softmax
   const mx    = Math.max(...logits);
   const exps  = logits.map(x => Math.exp(x - mx));
   const sum   = exps.reduce((a, b) => a + b, 0);
@@ -708,9 +620,7 @@ async function classify(img) {
 function cosine(a, b) {
   let dot = 0, na = 0, nb = 0;
   for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    na  += a[i] * a[i];
-    nb  += b[i] * b[i];
+    dot += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i];
   }
   return dot / (Math.sqrt(na) * Math.sqrt(nb) + 1e-10);
 }
@@ -720,14 +630,23 @@ async function vectorSearch(query, k = 3) {
   const emb = await getEmbedder();
   const out = await emb(query, { pooling: 'mean', normalize: true });
   const qv  = Array.from(out.data);
-
   const scored = vectorDB.ids.map((id, i) => ({
-    doc:  vectorDB.documents[i],
-    meta: vectorDB.metadatas[i],
+    doc:   vectorDB.documents[i],
+    meta:  vectorDB.metadatas[i],
     score: cosine(qv, vectorDB.embeddings[i]),
   }));
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, k);
+}
+
+async function getEmbedder() {
+  if (embedder_fn) return embedder_fn;
+  const { pipeline, env } = await import(
+    'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1'
+  );
+  env.allowLocalModels = false;
+  embedder_fn = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+  return embedder_fn;
 }
 
 // ──────────────────────────────────────────────────
@@ -744,7 +663,6 @@ async function gemini(prompt, grounding = false) {
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
   );
-
   if (!r.ok) {
     const err = await r.json().catch(() => ({}));
     throw new Error(err.error?.message || `Gemini API error ${r.status}`);
@@ -759,19 +677,14 @@ async function gemini(prompt, grounding = false) {
 async function tavilySearch(query) {
   const { tavilyKey } = cfg();
   if (!tavilyKey) throw new Error('Tavily API key is missing.');
-
   const r = await fetch('https://api.tavily.com/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      api_key:      tavilyKey,
-      query,
-      max_results:  3,
-      search_depth: 'advanced',
-      include_answer: true,
+      api_key: tavilyKey, query, max_results: 3,
+      search_depth: 'advanced', include_answer: true,
     }),
   });
-
   if (!r.ok) throw new Error(`Tavily error ${r.status}`);
   const d = await r.json();
   return d.results.map(x => x.content).join(' || ');
@@ -783,14 +696,13 @@ async function tavilySearch(query) {
 async function multiAgentRAG(breed, question) {
   const { search } = cfg();
 
-  // ── Agent 1: Relevance check ──────────────────
+  // Agent 1: Relevance check
   pipeSet('ps-rel', 'active', '<span class="spin"></span>');
   const relAns = await gemini(
     `You are a strict relevance checker for a dog breed info service.
 Breed: "${breed}". Question: "${question}"
 Is this question about dogs or this specific breed? Answer ONLY "YES" or "NO".`
   );
-
   if (!relAns.trim().toUpperCase().startsWith('YES')) {
     pipeSet('ps-rel', 'fail', '✕');
     throw new Error(
@@ -800,32 +712,27 @@ Is this question about dogs or this specific breed? Answer ONLY "YES" or "NO".`
   }
   pipeSet('ps-rel', 'done', '✓');
 
-  // ── Agent 2: Vector DB search ─────────────────
+  // Agent 2: Vector DB search
   pipeSet('ps-vec', 'active', '<span class="spin"></span>');
   let useVec = false;
   let vecText = '';
-
   if (vectorDB) {
     try {
       const hits = await vectorSearch(`${breed}: ${question}`, 3);
-      vecText     = hits.map(h => h.doc).join(' ');
-
+      vecText    = hits.map(h => h.doc).join(' ');
       const vecAns = await gemini(
         `Does the following text contain a useful answer for the question "${question}" about ${breed}?
 Text: "${vecText.slice(0, 800)}"
 Answer ONLY "YES" or "NO".`
       );
       useVec = vecAns.trim().toUpperCase().startsWith('YES');
-    } catch (e) {
-      console.warn('Vector search error:', e);
-    }
+    } catch (e) { console.warn('Vector search error:', e); }
   }
   pipeSet('ps-vec', 'done', '✓');
 
-  // ── Agent 3: Web search (if needed) ──────────
+  // Agent 3: Web search if needed
   let sourceText = vecText;
   let sourceType = 'kb';
-
   if (!useVec) {
     show('ps-web');
     pipeSet('ps-web', 'active', '<span class="spin"></span>');
@@ -833,11 +740,9 @@ Answer ONLY "YES" or "NO".`
       if (search === 'tavily') {
         sourceText = await tavilySearch(`${breed} dog ${question}`);
       } else {
-        // Gemini grounding — returns the grounded answer directly
         sourceText = await gemini(`Tell me about ${breed} dogs: ${question}`, true);
       }
     } catch (e) {
-      // Fall back to Gemini without grounding
       sourceText = await gemini(
         `Answer this question about ${breed} dogs using your knowledge: ${question}`
       );
@@ -846,7 +751,7 @@ Answer ONLY "YES" or "NO".`
     pipeSet('ps-web', 'done', '✓');
   }
 
-  // ── Agent 4: Synthesise ───────────────────────
+  // Agent 4: Synthesise
   pipeSet('ps-syn', 'active', '<span class="spin"></span>');
   const final = await gemini(
     `You are a friendly, knowledgeable dog breed expert assistant.
@@ -866,8 +771,8 @@ ${sourceText.slice(0, 2500)}`
 // ──────────────────────────────────────────────────
 // UI HELPERS
 // ──────────────────────────────────────────────────
-function show(id)  { document.getElementById(id)?.classList.remove('hidden'); }
-function hide(id)  { document.getElementById(id)?.classList.add('hidden');    }
+function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
+function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
 
 function pipeSet(id, state, iconHTML) {
   const el = document.getElementById(id);
@@ -893,27 +798,25 @@ function resetPipeline() {
 // ──────────────────────────────────────────────────
 function loadConfig() {
   const s = JSON.parse(localStorage.getItem('dogai') || '{}');
-  if (s.gk)  document.getElementById('c-gemini-key').value = s.gk;
-  if (s.tk)  document.getElementById('c-tavily-key').value = s.tk;
-  if (s.m)   document.getElementById('c-model').value      = s.m;
-  if (s.sp)  document.getElementById('c-search').value     = s.sp;
+  if (s.gk) document.getElementById('c-gemini-key').value = s.gk;
+  if (s.tk) document.getElementById('c-tavily-key').value = s.tk;
+  if (s.m)  document.getElementById('c-model').value      = s.m;
+  if (s.sp) document.getElementById('c-search').value     = s.sp;
 }
 
 window.saveConfig = () =>
   localStorage.setItem('dogai', JSON.stringify({
-    gk:  document.getElementById('c-gemini-key').value,
-    tk:  document.getElementById('c-tavily-key').value,
-    m:   document.getElementById('c-model').value,
-    sp:  document.getElementById('c-search').value,
+    gk: document.getElementById('c-gemini-key').value,
+    tk: document.getElementById('c-tavily-key').value,
+    m:  document.getElementById('c-model').value,
+    sp: document.getElementById('c-search').value,
   }));
 
 window.toggleConfig = function() {
   const d = document.getElementById('cfg-drawer');
   const l = document.getElementById('cfg-label');
   d.classList.toggle('open');
-  l.textContent = d.classList.contains('open')
-    ? '⚙ hide config'
-    : '⚙ configure api keys';
+  l.textContent = d.classList.contains('open') ? '⚙ hide config' : '⚙ configure api keys';
 };
 
 // ──────────────────────────────────────────────────
@@ -938,15 +841,14 @@ window.handleDrop = function(e) {
   document.getElementById('drop-zone').classList.remove('over');
   loadFile(e.dataTransfer.files[0]);
 };
-
 window.onFileChosen = e => loadFile(e.target.files[0]);
 
 window.resetAll = function() {
-  currentImg    = null;
-  selectedRaw   = null;
+  currentImg  = null;
+  selectedRaw = null;
   document.getElementById('preview-img').src = '';
   document.getElementById('file-in').value   = '';
-  ['preview-wrap','classify-row','results-card','question-card','answer-card'].forEach(hide);
+  ['preview-wrap','classify-row','results-card','question-card','answer-card','model-load-box'].forEach(hide);
   show('drop-zone');
 };
 
@@ -983,7 +885,6 @@ window.doClassify = async function() {
 function renderBreeds(preds) {
   const list = document.getElementById('breeds-list');
   list.innerHTML = '';
-
   preds.forEach((pred, i) => {
     const div = document.createElement('div');
     div.className = 'breed-row';
@@ -1001,7 +902,6 @@ function renderBreeds(preds) {
     list.appendChild(div);
   });
 
-  // None of these
   const none = document.createElement('div');
   none.className = 'breed-row';
   none.onclick = () => selectBreed('none');
@@ -1021,7 +921,6 @@ let pendingBreedIdx = null;
 function selectBreed(idx) {
   document.querySelectorAll('.breed-row').forEach(r => r.classList.remove('picked'));
   pendingBreedIdx = idx;
-
   if (idx === 'none') {
     document.getElementById('br-none').closest('.breed-row').classList.add('picked');
     document.getElementById('br-none').checked = true;
@@ -1052,8 +951,7 @@ window.confirmBreed = function() {
 };
 
 function openQuestionCard() {
-  document.getElementById('breed-headline').textContent =
-    `🐕 ${breedDisplay(selectedRaw)}`;
+  document.getElementById('breed-headline').textContent = `🐕 ${breedDisplay(selectedRaw)}`;
   show('question-card');
   hide('answer-card');
   document.getElementById('q-in').focus();
@@ -1073,8 +971,8 @@ window.doAsk = async function() {
     return;
   }
 
-  const btn     = document.getElementById('ask-btn');
-  btn.disabled  = true;
+  const btn = document.getElementById('ask-btn');
+  btn.disabled    = true;
   btn.textContent = '…';
 
   show('answer-card');
@@ -1082,7 +980,6 @@ window.doAsk = async function() {
 
   try {
     const { answer, source } = await multiAgentRAG(selectedRaw, q);
-
     document.getElementById('answer-text').textContent = answer;
     document.getElementById('source-tag').innerHTML = source === 'kb'
       ? '<span class="source-tag kb">📚 Knowledge base</span>'
