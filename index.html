@@ -455,18 +455,7 @@ async function fetchVectorDB() {
 }
 
 // ──────────────────────────────────────────────────
-// MODEL LOADING — split ONNX support
-//
-// ONNX Runtime Web cannot resolve a companion .onnx.data
-// file on its own when given a path string. We must:
-//   1. Fetch dogmodel.onnx  → ArrayBuffer (the model graph)
-//   2. Fetch dogmodel.onnx.data → ArrayBuffer (the weights)
-//   3. Pass both to InferenceSession.create via `externalData`
-//
-// The `externalData` array tells ORT where to find each
-// external weight blob. The `path` field must match exactly
-// what the .onnx file's ExternalData entries reference
-// (usually just the bare filename, e.g. "dogmodel.onnx.data").
+// MODEL LOADING — split ONNX support with BETTER ERROR LOGGING
 // ──────────────────────────────────────────────────
 async function loadORT() {
   if (ort_session) return ort_session;
@@ -487,8 +476,12 @@ async function loadORT() {
   // ── Fetch with streaming progress ──────────────
   async function fetchWithProgress(url, label, startPct, endPct) {
     lblEl.textContent = label;
+    console.log(`[ONNX Debug] Fetching: ${url}`);  // ← DEBUG LOG
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+    if (!res.ok) {
+      console.error(`[ONNX Debug] Fetch failed for ${url}: ${res.status} ${res.statusText}`);  // ← DEBUG LOG
+      throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+    }
 
     const total  = parseInt(res.headers.get('content-length') || '0', 10);
     const reader = res.body.getReader();
@@ -504,13 +497,11 @@ async function loadORT() {
         const pct = startPct + ((loaded / total) * (endPct - startPct));
         setProgress(pct, `${label} — ${(loaded / 1024 / 1024).toFixed(1)} MB`);
       } else {
-        // Unknown size — animate between start/end
         const approxPct = Math.min(endPct - 1, startPct + ((endPct - startPct) * 0.9));
         setProgress(approxPct, `${label} — ${(loaded / 1024 / 1024).toFixed(1)} MB`);
       }
     }
 
-    // Concatenate chunks into a single ArrayBuffer
     const totalBytes = chunks.reduce((n, c) => n + c.length, 0);
     const buffer     = new Uint8Array(totalBytes);
     let offset       = 0;
@@ -519,6 +510,7 @@ async function loadORT() {
       offset += chunk.length;
     }
     setProgress(endPct);
+    console.log(`[ONNX Debug] Successfully fetched ${url}: ${(totalBytes/1024/1024).toFixed(2)} MB`);  // ← DEBUG LOG
     return buffer.buffer;
   }
 
@@ -540,29 +532,48 @@ async function loadORT() {
     // Step 3 — create the session  [90 → 100%]
     setProgress(90, 'Initialising runtime…');
     lblEl.textContent = 'Initialising ONNX Runtime…';
+    console.log('[ONNX Debug] Creating InferenceSession with externalData...');  // ← DEBUG LOG
 
     ort_session = await ort.InferenceSession.create(
-      modelBuffer,           // pass the .onnx file as an ArrayBuffer
+      modelBuffer,
       {
         executionProviders: ['wasm'],
         externalData: [
           {
-            // `path` must match the filename stored inside the .onnx model's
-            // ExternalData field — typically the bare filename with no directory.
             path: 'dogmodel.onnx.data',
-            data: dataBuffer,    // the pre-fetched weight ArrayBuffer
+            data: dataBuffer,
           }
         ],
       }
     );
 
+    console.log('[ONNX Debug] Session created successfully!');  // ← DEBUG LOG
     setProgress(100, 'Model ready ✓');
     setTimeout(() => hide('model-load-box'), 800);
     return ort_session;
 
   } catch (e) {
     hide('model-load-box');
-    throw new Error(`Model failed to load: ${e.message}`);
+    
+    // 🔥🔥🔥 COMPREHENSIVE ERROR LOGGING 🔥🔥🔥
+    console.error('=== 🐕 ONNX LOAD ERROR DEBUG ===');
+    console.error('Error object:', e);
+    console.error('Error name:', e?.name);
+    console.error('Error message:', e?.message);
+    console.error('Error stack:', e?.stack);
+    console.error('Error toString:', e?.toString?.());
+    console.error('Error constructor:', e?.constructor?.name);
+    console.error('JSON stringify:', JSON.stringify(e, Object.getOwnPropertyNames(e)));
+    console.error('=== END DEBUG ===');
+    
+    // Create the safest possible error message for the UI
+    let msg = 'Unknown error';
+    if (e?.message) msg = e.message;
+    else if (typeof e === 'string') msg = e;
+    else if (e?.toString) msg = e.toString();
+    else msg = JSON.stringify(e) || 'See console for details';
+    
+    throw new Error(`Model failed to load: ${msg}`);
   }
 }
 
