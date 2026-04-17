@@ -3,1013 +3,482 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dog Breed Field Guide</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/ort.min.js"></script>
-
+  <title>Dog Breed Identifier</title>
   <style>
+    /* ── Variables ─────────────────────────────────────── */
     :root {
-      --bg:        #111009;
-      --surface:   #1A1814;
-      --surface2:  #221F19;
-      --surface3:  #2C2820;
-      --amber:     #E8A44A;
-      --amber-dim: #A8732E;
-      --amber-glow:rgba(232,164,74,0.12);
-      --cream:     #F5F0E8;
-      --muted:     #8A8070;
-      --border:    #2E2A22;
-      --border2:   #3A3428;
-      --green:     #7EC89A;
-      --red:       #E07070;
-      --blue:      #7AAED0;
-      --r: 12px;
+      --amber:    #E8A44A;
+      --amber-dk: #C8862E;
+      --dark:     #1A1814;
+      --mid:      #3D3A34;
+      --muted:    #7A7670;
+      --bg:       #F7F5F0;
+      --card:     #FFFFFF;
+      --border:   #E4E0D8;
+      --radius:   14px;
+      --shadow:   0 4px 24px rgba(0,0,0,.08);
+      --shadow-lg:0 8px 40px rgba(0,0,0,.13);
+      --trans:    .22s ease;
     }
 
+    /* ── Reset & base ──────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
     body {
-      font-family: 'Lora', Georgia, serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
-      color: var(--cream);
+      color: var(--dark);
       min-height: 100vh;
-      padding: 32px 16px 64px;
-      background-image: radial-gradient(ellipse 60% 40% at 50% -10%, rgba(232,164,74,0.06) 0%, transparent 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .wrap { max-width: 680px; margin: 0 auto; }
+    /* ── Layout ────────────────────────────────────────── */
+    header {
+      width: 100%; background: var(--dark);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    header span { font-size: 1.75rem; }
+    header h1 { color: var(--amber); font-size: 1.25rem; font-weight: 700; letter-spacing: -.3px; }
+    header p  { color: var(--muted); font-size: .8rem; margin-top: 1px; }
 
-    /* ── HEADER ── */
-    header { text-align: center; margin-bottom: 40px; }
-    header .eyebrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--amber); margin-bottom: 12px; opacity: 0.8;
+    main {
+      width: 100%; max-width: 620px;
+      padding: 2.5rem 1.25rem 4rem;
+      display: flex; flex-direction: column; gap: 2rem;
     }
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
-      color: var(--cream); line-height: 1.15; letter-spacing: -0.02em;
-    }
-    header h1 em { font-style: italic; color: var(--amber); }
-    header p { color: var(--muted); font-size: 0.9rem; margin-top: 12px; font-style: italic; }
 
-    /* ── CONFIG ── */
-    .config-bar {
-      display: flex; align-items: center; justify-content: flex-end;
-      gap: 8px; margin-bottom: 20px; cursor: pointer; user-select: none;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
-      color: var(--muted); transition: color 0.2s;
-    }
-    .config-bar:hover { color: var(--amber); }
-    .config-bar .dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--amber-dim); transition: background 0.2s;
-    }
-    .config-bar:hover .dot { background: var(--amber); }
-    .config-drawer {
-      background: var(--surface); border: 1px solid var(--border2);
-      border-radius: var(--r); padding: 20px; margin-bottom: 24px; display: none;
-    }
-    .config-drawer.open { display: block; }
-    .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .cfg-group label {
-      display: block; font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--muted); margin-bottom: 5px;
-    }
-    .cfg-note { font-size: 0.75rem; color: var(--muted); margin-top: 12px; font-style: italic; }
-    .cfg-note a { color: var(--amber); }
-
-    /* ── CARD ── */
+    /* ── Cards ─────────────────────────────────────────── */
     .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 24px; margin-bottom: 16px;
-      position: relative; overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      transition: opacity var(--trans);
     }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
-      opacity: 0.4;
+    .card.hidden { display: none; }
+    .card h2 {
+      font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.1rem;
     }
-    .step-label {
-      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
-      text-transform: uppercase; letter-spacing: 0.15em;
-      color: var(--amber); margin-bottom: 16px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .step-label::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
 
-    /* ── INPUTS ── */
-    input[type="text"], input[type="password"], select {
-      width: 100%; background: var(--surface2); border: 1px solid var(--border2);
-      border-radius: 6px; padding: 9px 13px; color: var(--cream);
-      font-size: 0.88rem; font-family: 'Lora', serif; outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    input:focus, select:focus {
-      border-color: var(--amber-dim);
-      box-shadow: 0 0 0 3px var(--amber-glow);
-    }
-    select option { background: var(--surface2); }
-
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 10px 22px; border-radius: 6px; border: none;
-      font-size: 0.85rem; font-family: 'Lora', serif; font-weight: 500;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-primary { background: var(--amber); color: #1A1814; font-weight: 600; }
-    .btn-primary:hover { background: #F0B660; transform: translateY(-1px); }
-    .btn-primary:active { transform: none; }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
-    .btn-ghost:hover { color: var(--cream); border-color: var(--muted); }
-
-    /* ── UPLOAD ZONE ── */
+    /* ── Upload zone ────────────────────────────────────── */
     .upload-zone {
-      border: 1px dashed var(--border2); border-radius: 10px;
-      padding: 52px 24px; text-align: center; cursor: pointer;
-      transition: all 0.25s; background: var(--surface2);
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--trans), background var(--trans);
     }
-    .upload-zone:hover, .upload-zone.over {
-      border-color: var(--amber-dim); background: var(--amber-glow);
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--amber);
+      background: #FEF8EE;
     }
-    .upload-icon { font-size: 2.8rem; display: block; margin-bottom: 12px; opacity: 0.6; }
-    .upload-zone p { color: var(--muted); font-size: 0.85rem; font-style: italic; }
-    .upload-zone strong { color: var(--cream); font-style: normal; }
+    .upload-zone input { display: none; }
+    .upload-zone .icon { font-size: 2.5rem; margin-bottom: .6rem; }
+    .upload-zone p { color: var(--muted); font-size: .9rem; }
+    .upload-zone strong { color: var(--amber); }
 
-    /* ── IMAGE PREVIEW ── */
-    .img-wrap { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface2); }
-    .img-wrap img { width: 100%; max-height: 340px; object-fit: contain; display: block; }
-    .img-wrap .clear-btn {
-      position: absolute; top: 10px; right: 10px;
-      background: rgba(0,0,0,0.7); border: none; color: var(--cream);
-      border-radius: 50%; width: 30px; height: 30px; cursor: pointer;
-      font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
+    /* ── Preview ────────────────────────────────────────── */
+    #preview-wrap {
+      position: relative; text-align: center; margin-top: 1.25rem;
+      display: none;
     }
-    .img-wrap .clear-btn:hover { background: rgba(0,0,0,0.9); }
-
-    /* ── MODEL LOAD PROGRESS ── */
-    .model-load {
-      background: var(--surface2); border: 1px solid var(--border2);
-      border-radius: 8px; padding: 14px 16px; margin-top: 14px;
+    #preview-wrap img {
+      width: 100%; max-height: 320px; object-fit: cover;
+      border-radius: 10px; display: block;
     }
-    .model-load-header {
-      display: flex; justify-content: space-between; align-items: center;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
-      color: var(--muted); margin-bottom: 8px;
-    }
-    .model-load-header span:last-child { color: var(--amber); }
-    .progress-track {
-      height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%; width: 0%;
-      background: linear-gradient(90deg, var(--amber-dim), var(--amber));
-      border-radius: 2px; transition: width 0.3s ease;
-    }
-    .model-load-sub {
-      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
-      color: var(--muted); margin-top: 6px; font-style: italic;
+    #preview-wrap button.clear-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(26,24,20,.65); color: #fff;
+      border: none; border-radius: 50%; width: 28px; height: 28px;
+      font-size: 1rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
     }
 
-    /* ── BREED OPTIONS ── */
-    .breeds { display: flex; flex-direction: column; gap: 8px; }
-    .breed-row {
-      display: flex; align-items: center; gap: 14px;
-      padding: 13px 16px; border: 1px solid var(--border2);
-      border-radius: 8px; cursor: pointer; transition: all 0.18s; background: var(--surface2);
+    /* ── Primary button ─────────────────────────────────── */
+    .btn {
+      width: 100%; padding: .85rem 1rem;
+      background: var(--amber); color: var(--dark);
+      border: none; border-radius: 8px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      transition: background var(--trans), transform var(--trans);
+      margin-top: 1.25rem;
     }
-    .breed-row:hover { border-color: var(--amber-dim); }
-    .breed-row.picked { border-color: var(--amber); background: var(--amber-glow); }
-    .breed-row input[type="radio"] { accent-color: var(--amber); }
-    .breed-info { flex: 1; min-width: 0; }
-    .breed-name-text { font-size: 0.95rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .breed-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 5px; overflow: hidden; }
-    .breed-fill { height: 100%; background: linear-gradient(90deg, var(--amber-dim), var(--amber)); border-radius: 2px; transition: width 0.5s ease; }
-    .breed-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); flex-shrink: 0; }
+    .btn:hover:not(:disabled) { background: var(--amber-dk); }
+    .btn:active:not(:disabled) { transform: scale(.98); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* ── CUSTOM BREED INPUT ── */
-    .custom-input-row { display: flex; gap: 8px; margin-top: 10px; }
-    .custom-input-row input { flex: 1; }
+    /* ── Spinner ─────────────────────────────────────────── */
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2.5px solid rgba(26,24,20,.2);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── PIPELINE ── */
-    .pipeline { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-    .pipe-step {
-      display: flex; align-items: center; gap: 10px; padding: 7px 0;
-      font-size: 0.82rem; color: var(--muted); font-family: 'JetBrains Mono', monospace;
-      border-left: 2px solid transparent; padding-left: 12px; transition: all 0.2s;
+    /* ── Prediction cards ───────────────────────────────── */
+    .pred-list { display: flex; flex-direction: column; gap: .75rem; }
+    .pred-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px; cursor: pointer;
+      transition: border-color var(--trans), background var(--trans);
     }
-    .pipe-step.active { color: var(--amber); border-left-color: var(--amber); }
-    .pipe-step.done   { color: var(--green); border-left-color: var(--green); }
-    .pipe-step.fail   { color: var(--red);   border-left-color: var(--red);   }
-    .pipe-icon { width: 18px; text-align: center; flex-shrink: 0; }
+    .pred-item:hover { border-color: var(--amber); background: #FEF8EE; }
+    .pred-item.selected { border-color: var(--amber); background: #FEF8EE; }
+    .pred-item input[type=radio] { display: none; }
+    .pred-rank {
+      min-width: 28px; height: 28px;
+      background: var(--bg); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; color: var(--muted);
+    }
+    .pred-item.selected .pred-rank { background: var(--amber); color: var(--dark); }
+    .pred-name { flex: 1; font-weight: 600; font-size: 1rem; }
+    .pred-pct {
+      font-size: .85rem; font-weight: 700; color: var(--amber);
+    }
+    .pred-bar-wrap {
+      width: 100%; height: 4px; background: var(--border);
+      border-radius: 99px; margin-top: 4px; overflow: hidden;
+    }
+    .pred-bar { height: 100%; background: var(--amber); border-radius: 99px; }
+    .pred-label-wrap { flex: 1; }
 
-    /* ── SPINNER ── */
-    .spin {
-      width: 14px; height: 14px; border: 2px solid currentColor;
-      border-top-color: transparent; border-radius: 50%;
-      animation: rot 0.55s linear infinite; display: inline-block;
+    /* ── Question area ──────────────────────────────────── */
+    .qa-breed-label {
+      font-size: 1.2rem; font-weight: 700; color: var(--dark);
+      margin-bottom: .25rem;
     }
-    @keyframes rot { to { transform: rotate(360deg); } }
+    .qa-sub { font-size: .85rem; color: var(--muted); margin-bottom: 1.1rem; }
+    .qa-input-wrap { position: relative; }
+    textarea {
+      width: 100%; min-height: 88px;
+      padding: .9rem 1rem; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 1rem; resize: vertical;
+      font-family: inherit; color: var(--dark); background: var(--bg);
+      transition: border-color var(--trans);
+      outline: none;
+    }
+    textarea:focus { border-color: var(--amber); background: #fff; }
 
-    /* ── ANSWER ── */
-    .answer-bubble {
-      background: var(--surface2); border-radius: 10px; padding: 18px 20px;
-      font-size: 0.93rem; line-height: 1.8; white-space: pre-wrap;
-      border-left: 3px solid var(--amber-dim);
+    /* ── Answer bubble ──────────────────────────────────── */
+    .answer-box {
+      background: var(--bg); border-left: 4px solid var(--amber);
+      border-radius: 0 10px 10px 0;
+      padding: 1.1rem 1.2rem;
+      font-size: .97rem; line-height: 1.6; color: var(--mid);
     }
-    .source-tag {
-      display: inline-flex; align-items: center; gap: 5px; margin-top: 12px;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      padding: 3px 10px; border-radius: 20px;
+    .answer-actions {
+      display: flex; gap: .75rem; margin-top: 1rem;
     }
-    .source-tag.kb  { background: rgba(124,106,247,0.15); color: #A094F0; }
-    .source-tag.web { background: rgba(122,174,208,0.15); color: var(--blue); }
+    .btn-ghost {
+      flex: 1; padding: .65rem;
+      background: transparent; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: .85rem; font-weight: 600;
+      cursor: pointer; color: var(--mid);
+      transition: border-color var(--trans), color var(--trans);
+    }
+    .btn-ghost:hover { border-color: var(--amber); color: var(--dark); }
 
-    /* ── INLINE MESSAGES ── */
-    .msg {
-      padding: 11px 14px; border-radius: 7px; font-size: 0.84rem;
-      display: flex; align-items: center; gap: 8px;
+    /* ── Error ───────────────────────────────────────────── */
+    .error-msg {
+      background: #FFF1F0; border: 1px solid #FFC9C4;
+      color: #C0392B; border-radius: 8px;
+      padding: .8rem 1rem; font-size: .88rem; margin-top: .75rem;
     }
-    .msg.loading {
-      background: rgba(232,164,74,0.08); border: 1px solid rgba(232,164,74,0.2); color: var(--amber);
-    }
-    .msg.err {
-      background: rgba(224,112,112,0.1); border: 1px solid rgba(224,112,112,0.25); color: var(--red);
-    }
-
-    /* ── ROW HELPERS ── */
-    .row-right    { display: flex; justify-content: flex-end; margin-top: 16px; }
-    .row-between  { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-    .q-row        { display: flex; gap: 8px; }
-    .q-row input  { flex: 1; }
-    .divider      { height: 1px; background: var(--border); margin: 18px 0; }
-    .hidden       { display: none !important; }
-    .mt8  { margin-top: 8px; }
-    .mt12 { margin-top: 12px; }
-    .mt16 { margin-top: 16px; }
   </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- HEADER -->
-  <header>
-    <p class="eyebrow">AI · RAG · Computer Vision</p>
-    <h1>Dog Breed<br><em>Field Guide</em></h1>
-    <p>Upload a photo — identify the breed — ask anything.</p>
-  </header>
-
-  <!-- CONFIG BAR -->
-  <div class="config-bar" id="cfg-bar" onclick="toggleConfig()">
-    <span class="dot"></span>
-    <span id="cfg-label">⚙ configure api keys</span>
+<header>
+  <span>🐕</span>
+  <div>
+    <h1>Dog Breed Identifier</h1>
+    <p>Upload a photo · identify the breed · ask anything</p>
   </div>
-  <div class="config-drawer" id="cfg-drawer">
-    <div class="config-row">
-      <div class="cfg-group">
-        <label>Gemini API Key</label>
-        <input type="password" id="c-gemini-key" placeholder="AIza…" oninput="saveConfig()">
-      </div>
-      <div class="cfg-group">
-        <label>Tavily Key (optional)</label>
-        <input type="password" id="c-tavily-key" placeholder="tvly-…" oninput="saveConfig()">
-      </div>
-      <div class="cfg-group">
-        <label>Gemini Model</label>
-        <input type="text" id="c-model" value="gemini-2.0-flash" oninput="saveConfig()">
-      </div>
-      <div class="cfg-group">
-        <label>Web Search Backend</label>
-        <select id="c-search" onchange="saveConfig()">
-          <option value="gemini">Gemini Grounding (recommended)</option>
-          <option value="tavily">Tavily</option>
-        </select>
-      </div>
+</header>
+
+<main>
+
+  <!-- Step 1 — Upload -->
+  <div class="card" id="card-upload">
+    <h2>Step 1 — Upload a photo</h2>
+
+    <div class="upload-zone" id="drop-zone">
+      <input type="file" id="file-input" accept="image/*" />
+      <div class="icon">📷</div>
+      <p>Drag &amp; drop a photo here, or <strong>click to browse</strong></p>
     </div>
-    <p class="cfg-note">
-      Keys are saved in <code>localStorage</code> — never sent anywhere except the respective API.
-      Get a Gemini key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a>.
-      Gemini Grounding works with <strong>gemini-2.0-flash</strong> or newer.
-    </p>
+
+    <div id="preview-wrap">
+      <img id="preview-img" src="" alt="Dog preview" />
+      <button class="clear-btn" id="clear-btn" title="Remove image">✕</button>
+    </div>
+
+    <div id="upload-error"></div>
+    <button class="btn" id="classify-btn" disabled>Identify Breed</button>
   </div>
 
-  <!-- STEP 1: UPLOAD -->
-  <div class="card" id="upload-card">
-    <div class="step-label">Step 1 — Upload a dog photo</div>
+  <!-- Step 2 — Predictions -->
+  <div class="card hidden" id="card-results">
+    <h2>Step 2 — Select the correct breed</h2>
+    <div class="pred-list" id="pred-list"></div>
+    <div id="results-error"></div>
+    <button class="btn" id="select-btn" disabled>Ask a Question →</button>
+  </div>
 
-    <div class="upload-zone" id="drop-zone"
-         onclick="document.getElementById('file-in').click()"
-         ondragover="event.preventDefault();this.classList.add('over')"
-         ondragleave="this.classList.remove('over')"
-         ondrop="handleDrop(event)">
-      <span class="upload-icon">🐾</span>
-      <p><strong>Click to upload</strong> or drag & drop</p>
-      <p>PNG, JPG supported</p>
+  <!-- Step 3 — Ask -->
+  <div class="card hidden" id="card-ask">
+    <h2>Step 3 — Ask anything</h2>
+    <div class="qa-breed-label" id="qa-breed-name"></div>
+    <p class="qa-sub">What would you like to know about this breed?</p>
+    <div class="qa-input-wrap">
+      <textarea id="question-input" placeholder="e.g. How much exercise does this breed need?"></textarea>
     </div>
+    <div id="ask-error"></div>
+    <button class="btn" id="ask-btn" disabled>Ask</button>
+  </div>
 
-    <div class="img-wrap hidden" id="preview-wrap">
-      <img id="preview-img" src="" alt="Preview" />
-      <button class="clear-btn" onclick="resetAll()">✕</button>
-    </div>
-
-    <input type="file" id="file-in" accept="image/*" class="hidden" onchange="onFileChosen(event)">
-
-    <!-- Model loading progress (shown during first classify) -->
-    <div class="model-load hidden" id="model-load-box">
-      <div class="model-load-header">
-        <span id="model-load-label">Loading model…</span>
-        <span id="model-load-pct">0%</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="model-load-bar"></div>
-      </div>
-      <div class="model-load-sub" id="model-load-sub">Fetching dogmodel.onnx…</div>
-    </div>
-
-    <div class="row-right hidden" id="classify-row">
-      <button class="btn btn-primary" id="classify-btn" onclick="doClassify()">
-        Identify breed →
-      </button>
+  <!-- Step 4 — Answer -->
+  <div class="card hidden" id="card-answer">
+    <h2>Answer</h2>
+    <div class="answer-box" id="answer-text"></div>
+    <div class="answer-actions">
+      <button class="btn-ghost" id="ask-another-btn">Ask another question</button>
+      <button class="btn-ghost" id="start-over-btn">Start over</button>
     </div>
   </div>
 
-  <!-- STEP 2: RESULTS -->
-  <div class="card hidden" id="results-card">
-    <div class="step-label">Step 2 — Select the correct breed</div>
-    <div id="classifying-msg" class="msg loading hidden">
-      <span class="spin"></span> Running image classification…
-    </div>
-    <div class="breeds" id="breeds-list"></div>
-    <div class="custom-input-row hidden" id="custom-row">
-      <input type="text" id="custom-breed-in" placeholder="e.g. Australian Shepherd" />
-      <button class="btn btn-primary" onclick="useCustomBreed()">Use this breed →</button>
-    </div>
-    <div class="row-right hidden" id="confirm-row">
-      <button class="btn btn-primary" onclick="confirmBreed()">Continue →</button>
-    </div>
-  </div>
+</main>
 
-  <!-- STEP 3: QUESTION -->
-  <div class="card hidden" id="question-card">
-    <div class="step-label">Step 3 — Ask about the breed</div>
-    <p id="breed-headline" style="font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:600; margin-bottom:16px; color:var(--amber);"></p>
-    <div class="q-row">
-      <input type="text" id="q-in"
-             placeholder="e.g. How big do they get? Are they good with kids?"
-             onkeydown="if(event.key==='Enter') doAsk()" />
-      <button class="btn btn-primary" id="ask-btn" onclick="doAsk()">Ask</button>
-    </div>
-  </div>
+<script>
+  /* ── CONFIG — update these after deploying your two APIs ──────────────── */
+  const CLASSIFIER_URL = "https://your-classifier.onrender.com";   // Render URL
+  const RAG_URL        = "https://your-rag.koyeb.app";             // Koyeb URL
+  /* ─────────────────────────────────────────────────────────────────────── */
 
-  <!-- STEP 4: ANSWER -->
-  <div class="card hidden" id="answer-card">
-    <div class="step-label">Step 4 — Answer</div>
-    <div class="pipeline" id="pipeline">
-      <div class="pipe-step" id="ps-rel">
-        <span class="pipe-icon">🔍</span> Checking question relevance…
-      </div>
-      <div class="pipe-step" id="ps-vec">
-        <span class="pipe-icon">🗄</span> Searching knowledge base…
-      </div>
-      <div class="pipe-step hidden" id="ps-web">
-        <span class="pipe-icon">🌐</span> Searching the web…
-      </div>
-      <div class="pipe-step" id="ps-syn">
-        <span class="pipe-icon">✦</span> Synthesising answer…
-      </div>
-    </div>
-    <div id="answer-body" class="hidden">
-      <div class="answer-bubble" id="answer-text"></div>
-      <div id="source-tag"></div>
-    </div>
-    <div class="msg err hidden" id="answer-err"></div>
-  </div>
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const dropZone      = document.getElementById("drop-zone");
+  const fileInput     = document.getElementById("file-input");
+  const previewWrap   = document.getElementById("preview-wrap");
+  const previewImg    = document.getElementById("preview-img");
+  const clearBtn      = document.getElementById("clear-btn");
+  const classifyBtn   = document.getElementById("classify-btn");
+  const uploadError   = document.getElementById("upload-error");
 
-</div><!-- /wrap -->
+  const cardResults   = document.getElementById("card-results");
+  const predList      = document.getElementById("pred-list");
+  const selectBtn     = document.getElementById("select-btn");
+  const resultsError  = document.getElementById("results-error");
 
-<!-- ───────────────────────────────────────────────────────── -->
-<script type="module">
+  const cardAsk       = document.getElementById("card-ask");
+  const qaBreedName   = document.getElementById("qa-breed-name");
+  const questionInput = document.getElementById("question-input");
+  const askBtn        = document.getElementById("ask-btn");
+  const askError      = document.getElementById("ask-error");
 
-// ──────────────────────────────────────────────────
-// CONFIGURATION & GLOBALS
-// ──────────────────────────────────────────────────
-const cfg = () => ({
-  geminiKey: document.getElementById('c-gemini-key').value.trim(),
-  tavilyKey: document.getElementById('c-tavily-key').value.trim(),
-  model:     document.getElementById('c-model').value.trim() || 'gemini-2.0-flash',
-  search:    document.getElementById('c-search').value,
-});
+  const cardAnswer    = document.getElementById("card-answer");
+  const answerText    = document.getElementById("answer-text");
+  const askAnotherBtn = document.getElementById("ask-another-btn");
+  const startOverBtn  = document.getElementById("start-over-btn");
 
-const BREED_NICKNAMES = {
-  'Xoloitzcuintli':             ' (Mexican Hairless)',
-  'Staffordshire-Bull-Terrier': ' (Pitbull)',
-  'Pembroke-Welsh-Corgi':       ' (Corgi)',
-};
+  // ── State ─────────────────────────────────────────────────────────────────
+  let selectedFile   = null;
+  let selectedBreed  = null;  // { breed, display_name }
 
-function breedDisplay(raw) {
-  return raw.replace(/-/g, ' ') + (BREED_NICKNAMES[raw] || '');
-}
+  // ── File selection ────────────────────────────────────────────────────────
+  dropZone.addEventListener("click", () => fileInput.click());
 
-let ort_session = null;
-let labels      = [];
-let vectorDB    = null;
-let embedder_fn = null;
-let selectedRaw = null;
-let currentImg  = null;
-
-// ──────────────────────────────────────────────────
-// INIT
-// ──────────────────────────────────────────────────
-async function init() {
-  loadConfig();
-  ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/';
-  await fetchLabels();
-  fetchVectorDB(); // background
-}
-
-async function fetchLabels() {
-  try {
-    const res  = await fetch('Dog_List.txt');
-    const text = await res.text();
-    labels = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
-  } catch { labels = []; }
-}
-
-async function fetchVectorDB() {
-  try {
-    const res = await fetch('dogdb.json');
-    vectorDB  = await res.json();
-    console.log(`Vector DB loaded: ${vectorDB.ids.length} entries`);
-  } catch (e) {
-    console.warn('dogdb.json not found — web search fallback will be used', e);
-  }
-}
-
-// ──────────────────────────────────────────────────
-// MODEL LOADING — split ONNX support with BETTER ERROR LOGGING
-// ──────────────────────────────────────────────────
-async function loadORT() {
-  if (ort_session) return ort_session;
-
-  // Show progress UI
-  show('model-load-box');
-  const bar    = document.getElementById('model-load-bar');
-  const pctEl  = document.getElementById('model-load-pct');
-  const subEl  = document.getElementById('model-load-sub');
-  const lblEl  = document.getElementById('model-load-label');
-
-  function setProgress(pct, sub) {
-    bar.style.width  = `${pct}%`;
-    pctEl.textContent = `${Math.round(pct)}%`;
-    if (sub) subEl.textContent = sub;
-  }
-
-  // ── Fetch with streaming progress ──────────────
-  async function fetchWithProgress(url, label, startPct, endPct) {
-    lblEl.textContent = label;
-    console.log(`[ONNX Debug] Fetching: ${url}`);  // ← DEBUG LOG
-    const res = await fetch(url);
-    if (!res.ok) {
-      console.error(`[ONNX Debug] Fetch failed for ${url}: ${res.status} ${res.statusText}`);  // ← DEBUG LOG
-      throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
-    }
-
-    const total  = parseInt(res.headers.get('content-length') || '0', 10);
-    const reader = res.body.getReader();
-    const chunks = [];
-    let loaded   = 0;
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      loaded += value.length;
-      if (total > 0) {
-        const pct = startPct + ((loaded / total) * (endPct - startPct));
-        setProgress(pct, `${label} — ${(loaded / 1024 / 1024).toFixed(1)} MB`);
-      } else {
-        const approxPct = Math.min(endPct - 1, startPct + ((endPct - startPct) * 0.9));
-        setProgress(approxPct, `${label} — ${(loaded / 1024 / 1024).toFixed(1)} MB`);
-      }
-    }
-
-    const totalBytes = chunks.reduce((n, c) => n + c.length, 0);
-    const buffer     = new Uint8Array(totalBytes);
-    let offset       = 0;
-    for (const chunk of chunks) {
-      buffer.set(chunk, offset);
-      offset += chunk.length;
-    }
-    setProgress(endPct);
-    console.log(`[ONNX Debug] Successfully fetched ${url}: ${(totalBytes/1024/1024).toFixed(2)} MB`);  // ← DEBUG LOG
-    return buffer.buffer;
-  }
-
-  try {
-    // Step 1 — fetch the model graph (.onnx)  [0 → 15%]
-    const modelBuffer = await fetchWithProgress(
-      'dogmodel.onnx',
-      'Loading model graph',
-      0, 15
-    );
-
-    // Step 2 — fetch the weight data (.onnx.data)  [15 → 90%]
-    const dataBuffer = await fetchWithProgress(
-      'dogmodel.onnx.data',
-      'Loading model weights',
-      15, 90
-    );
-
-    // Step 3 — create the session  [90 → 100%]
-    setProgress(90, 'Initialising runtime…');
-    lblEl.textContent = 'Initialising ONNX Runtime…';
-    console.log('[ONNX Debug] Creating InferenceSession with externalData...');  // ← DEBUG LOG
-
-    ort_session = await ort.InferenceSession.create(
-      modelBuffer,
-      {
-        executionProviders: ['wasm'],
-        externalData: [
-          {
-            path: 'dogmodel.onnx.data',
-            data: dataBuffer,
-          }
-        ],
-      }
-    );
-
-    console.log('[ONNX Debug] Session created successfully!');  // ← DEBUG LOG
-    setProgress(100, 'Model ready ✓');
-    setTimeout(() => hide('model-load-box'), 800);
-    return ort_session;
-
-  } catch (e) {
-    hide('model-load-box');
-    
-    // 🔥🔥🔥 COMPREHENSIVE ERROR LOGGING 🔥🔥🔥
-    console.error('=== 🐕 ONNX LOAD ERROR DEBUG ===');
-    console.error('Error object:', e);
-    console.error('Error name:', e?.name);
-    console.error('Error message:', e?.message);
-    console.error('Error stack:', e?.stack);
-    console.error('Error toString:', e?.toString?.());
-    console.error('Error constructor:', e?.constructor?.name);
-    console.error('JSON stringify:', JSON.stringify(e, Object.getOwnPropertyNames(e)));
-    console.error('=== END DEBUG ===');
-    
-    // Create the safest possible error message for the UI
-    let msg = 'Unknown error';
-    if (e?.message) msg = e.message;
-    else if (typeof e === 'string') msg = e;
-    else if (e?.toString) msg = e.toString();
-    else msg = JSON.stringify(e) || 'See console for details';
-    
-    throw new Error(`Model failed to load: ${msg}`);
-  }
-}
-
-// ──────────────────────────────────────────────────
-// IMAGE PREPROCESSING
-// ──────────────────────────────────────────────────
-function preprocessImage(img) {
-  const c   = document.createElement('canvas');
-  c.width   = 224; c.height = 224;
-  const ctx = c.getContext('2d');
-  ctx.drawImage(img, 0, 0, 224, 224);
-  const { data } = ctx.getImageData(0, 0, 224, 224);
-
-  const mean = [0.485, 0.456, 0.406];
-  const std  = [0.229, 0.224, 0.225];
-  const buf  = new Float32Array(3 * 224 * 224);
-
-  for (let h = 0; h < 224; h++) {
-    for (let w = 0; w < 224; w++) {
-      const px = (h * 224 + w) * 4;
-      for (let ch = 0; ch < 3; ch++) {
-        buf[ch * 224 * 224 + h * 224 + w] =
-          (data[px + ch] / 255 - mean[ch]) / std[ch];
-      }
-    }
-  }
-  return buf;
-}
-
-// ──────────────────────────────────────────────────
-// CLASSIFICATION
-// ──────────────────────────────────────────────────
-async function classify(img) {
-  const session = await loadORT();
-  const data    = preprocessImage(img);
-  const tensor  = new ort.Tensor('float32', data, [1, 3, 224, 224]);
-  const out     = await session.run({ input: tensor });
-  const logits  = Array.from(out[Object.keys(out)[0]].data);
-
-  const mx    = Math.max(...logits);
-  const exps  = logits.map(x => Math.exp(x - mx));
-  const sum   = exps.reduce((a, b) => a + b, 0);
-  const probs = exps.map(x => x / sum);
-
-  return probs
-    .map((p, i) => ({ p, i }))
-    .sort((a, b) => b.p - a.p)
-    .slice(0, 3)
-    .map(({ p, i }) => ({ label: labels[i] || `Class ${i}`, prob: p }));
-}
-
-// ──────────────────────────────────────────────────
-// VECTOR SEARCH
-// ──────────────────────────────────────────────────
-function cosine(a, b) {
-  let dot = 0, na = 0, nb = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i];
-  }
-  return dot / (Math.sqrt(na) * Math.sqrt(nb) + 1e-10);
-}
-
-async function vectorSearch(query, k = 3) {
-  if (!vectorDB) return null;
-  const emb = await getEmbedder();
-  const out = await emb(query, { pooling: 'mean', normalize: true });
-  const qv  = Array.from(out.data);
-  const scored = vectorDB.ids.map((id, i) => ({
-    doc:   vectorDB.documents[i],
-    meta:  vectorDB.metadatas[i],
-    score: cosine(qv, vectorDB.embeddings[i]),
-  }));
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, k);
-}
-
-async function getEmbedder() {
-  if (embedder_fn) return embedder_fn;
-  const { pipeline, env } = await import(
-    'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1'
-  );
-  env.allowLocalModels = false;
-  embedder_fn = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-  return embedder_fn;
-}
-
-// ──────────────────────────────────────────────────
-// GEMINI
-// ──────────────────────────────────────────────────
-async function gemini(prompt, grounding = false) {
-  const { geminiKey, model } = cfg();
-  if (!geminiKey) throw new Error('Gemini API key is missing — please open the ⚙ config panel.');
-
-  const body = { contents: [{ parts: [{ text: prompt }] }] };
-  if (grounding) body.tools = [{ google_search: {} }];
-
-  const r = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-  );
-  if (!r.ok) {
-    const err = await r.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Gemini API error ${r.status}`);
-  }
-  const d = await r.json();
-  return d.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-}
-
-// ──────────────────────────────────────────────────
-// TAVILY
-// ──────────────────────────────────────────────────
-async function tavilySearch(query) {
-  const { tavilyKey } = cfg();
-  if (!tavilyKey) throw new Error('Tavily API key is missing.');
-  const r = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      api_key: tavilyKey, query, max_results: 3,
-      search_depth: 'advanced', include_answer: true,
-    }),
+  dropZone.addEventListener("dragover", e => {
+    e.preventDefault(); dropZone.classList.add("drag-over");
   });
-  if (!r.ok) throw new Error(`Tavily error ${r.status}`);
-  const d = await r.json();
-  return d.results.map(x => x.content).join(' || ');
-}
-
-// ──────────────────────────────────────────────────
-// MULTI-AGENT RAG
-// ──────────────────────────────────────────────────
-async function multiAgentRAG(breed, question) {
-  const { search } = cfg();
-
-  // Agent 1: Relevance check
-  pipeSet('ps-rel', 'active', '<span class="spin"></span>');
-  const relAns = await gemini(
-    `You are a strict relevance checker for a dog breed info service.
-Breed: "${breed}". Question: "${question}"
-Is this question about dogs or this specific breed? Answer ONLY "YES" or "NO".`
-  );
-  if (!relAns.trim().toUpperCase().startsWith('YES')) {
-    pipeSet('ps-rel', 'fail', '✕');
-    throw new Error(
-      `This question doesn't seem related to the ${breedDisplay(breed)} breed. ` +
-      'Please ask something about the dog breed!'
-    );
-  }
-  pipeSet('ps-rel', 'done', '✓');
-
-  // Agent 2: Vector DB search
-  pipeSet('ps-vec', 'active', '<span class="spin"></span>');
-  let useVec = false;
-  let vecText = '';
-  if (vectorDB) {
-    try {
-      const hits = await vectorSearch(`${breed}: ${question}`, 3);
-      vecText    = hits.map(h => h.doc).join(' ');
-      const vecAns = await gemini(
-        `Does the following text contain a useful answer for the question "${question}" about ${breed}?
-Text: "${vecText.slice(0, 800)}"
-Answer ONLY "YES" or "NO".`
-      );
-      useVec = vecAns.trim().toUpperCase().startsWith('YES');
-    } catch (e) { console.warn('Vector search error:', e); }
-  }
-  pipeSet('ps-vec', 'done', '✓');
-
-  // Agent 3: Web search if needed
-  let sourceText = vecText;
-  let sourceType = 'kb';
-  if (!useVec) {
-    show('ps-web');
-    pipeSet('ps-web', 'active', '<span class="spin"></span>');
-    try {
-      if (search === 'tavily') {
-        sourceText = await tavilySearch(`${breed} dog ${question}`);
-      } else {
-        sourceText = await gemini(`Tell me about ${breed} dogs: ${question}`, true);
-      }
-    } catch (e) {
-      sourceText = await gemini(
-        `Answer this question about ${breed} dogs using your knowledge: ${question}`
-      );
-    }
-    sourceType = 'web';
-    pipeSet('ps-web', 'done', '✓');
-  }
-
-  // Agent 4: Synthesise
-  pipeSet('ps-syn', 'active', '<span class="spin"></span>');
-  const final = await gemini(
-    `You are a friendly, knowledgeable dog breed expert assistant.
-Using only the information below, answer the question in a warm, helpful tone.
-Do NOT mention sources, documentation, or where the info came from.
-
-Question: "${question}" (about ${breed} dogs)
-
-Information:
-${sourceText.slice(0, 2500)}`
-  );
-  pipeSet('ps-syn', 'done', '✓');
-
-  return { answer: final, source: sourceType };
-}
-
-// ──────────────────────────────────────────────────
-// UI HELPERS
-// ──────────────────────────────────────────────────
-function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
-function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
-
-function pipeSet(id, state, iconHTML) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('active', 'done', 'fail');
-  if (state) el.classList.add(state);
-  el.querySelector('.pipe-icon').innerHTML = iconHTML;
-}
-
-function resetPipeline() {
-  hide('answer-body');
-  hide('answer-err');
-  hide('ps-web');
-  [['ps-rel','🔍'],['ps-vec','🗄'],['ps-web','🌐'],['ps-syn','✦']].forEach(([id, icon]) => {
-    const el = document.getElementById(id);
-    el.classList.remove('active','done','fail');
-    el.querySelector('.pipe-icon').textContent = icon;
+  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+  dropZone.addEventListener("drop", e => {
+    e.preventDefault(); dropZone.classList.remove("drag-over");
+    const file = e.dataTransfer.files[0];
+    if (file) loadFile(file);
   });
-}
 
-// ──────────────────────────────────────────────────
-// CONFIG PERSISTENCE
-// ──────────────────────────────────────────────────
-function loadConfig() {
-  const s = JSON.parse(localStorage.getItem('dogai') || '{}');
-  if (s.gk) document.getElementById('c-gemini-key').value = s.gk;
-  if (s.tk) document.getElementById('c-tavily-key').value = s.tk;
-  if (s.m)  document.getElementById('c-model').value      = s.m;
-  if (s.sp) document.getElementById('c-search').value     = s.sp;
-}
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files[0]) loadFile(fileInput.files[0]);
+  });
 
-window.saveConfig = () =>
-  localStorage.setItem('dogai', JSON.stringify({
-    gk: document.getElementById('c-gemini-key').value,
-    tk: document.getElementById('c-tavily-key').value,
-    m:  document.getElementById('c-model').value,
-    sp: document.getElementById('c-search').value,
-  }));
+  clearBtn.addEventListener("click", resetUpload);
 
-window.toggleConfig = function() {
-  const d = document.getElementById('cfg-drawer');
-  const l = document.getElementById('cfg-label');
-  d.classList.toggle('open');
-  l.textContent = d.classList.contains('open') ? '⚙ hide config' : '⚙ configure api keys';
-};
-
-// ──────────────────────────────────────────────────
-// IMAGE HANDLING
-// ──────────────────────────────────────────────────
-function loadFile(file) {
-  if (!file || !file.type.startsWith('image/')) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = document.getElementById('preview-img');
-    img.src = e.target.result;
-    img.onload = () => { currentImg = img; };
-    hide('drop-zone');
-    show('preview-wrap');
-    show('classify-row');
-  };
-  reader.readAsDataURL(file);
-}
-
-window.handleDrop = function(e) {
-  e.preventDefault();
-  document.getElementById('drop-zone').classList.remove('over');
-  loadFile(e.dataTransfer.files[0]);
-};
-window.onFileChosen = e => loadFile(e.target.files[0]);
-
-window.resetAll = function() {
-  currentImg  = null;
-  selectedRaw = null;
-  document.getElementById('preview-img').src = '';
-  document.getElementById('file-in').value   = '';
-  ['preview-wrap','classify-row','results-card','question-card','answer-card','model-load-box'].forEach(hide);
-  show('drop-zone');
-};
-
-// ──────────────────────────────────────────────────
-// CLASSIFY
-// ──────────────────────────────────────────────────
-window.doClassify = async function() {
-  if (!currentImg) return;
-  const btn = document.getElementById('classify-btn');
-  btn.disabled    = true;
-  btn.textContent = 'Identifying…';
-
-  show('results-card');
-  show('classifying-msg');
-  document.getElementById('breeds-list').innerHTML = '';
-  hide('confirm-row');
-  hide('custom-row');
-
-  try {
-    const preds = await classify(currentImg);
-    hide('classifying-msg');
-    renderBreeds(preds);
-    show('confirm-row');
-  } catch (e) {
-    hide('classifying-msg');
-    document.getElementById('breeds-list').innerHTML =
-      `<div class="msg err">✕ Classification failed: ${e.message}</div>`;
-  } finally {
-    btn.disabled    = false;
-    btn.textContent = 'Identify breed →';
+  function loadFile(file) {
+    if (!file.type.startsWith("image/")) {
+      showError(uploadError, "Please upload an image file (JPG, PNG, WebP…)");
+      return;
+    }
+    selectedFile = file;
+    const url = URL.createObjectURL(file);
+    previewImg.src = url;
+    previewWrap.style.display = "block";
+    classifyBtn.disabled = false;
+    clearError(uploadError);
+    hideCard(cardResults);
+    hideCard(cardAsk);
+    hideCard(cardAnswer);
   }
-};
 
-function renderBreeds(preds) {
-  const list = document.getElementById('breeds-list');
-  list.innerHTML = '';
-  preds.forEach((pred, i) => {
-    const div = document.createElement('div');
-    div.className = 'breed-row';
-    div.onclick = () => selectBreed(i);
-    div.innerHTML = `
-      <input type="radio" name="br" id="br${i}" value="${pred.label}">
-      <div class="breed-info">
-        <div class="breed-name-text">${breedDisplay(pred.label)}</div>
-        <div class="breed-bar">
-          <div class="breed-fill" style="width:${(pred.prob*100).toFixed(1)}%"></div>
+  function resetUpload() {
+    selectedFile = null;
+    previewImg.src = "";
+    previewWrap.style.display = "none";
+    classifyBtn.disabled = true;
+    fileInput.value = "";
+    clearError(uploadError);
+    hideCard(cardResults);
+    hideCard(cardAsk);
+    hideCard(cardAnswer);
+  }
+
+  // ── Classify ──────────────────────────────────────────────────────────────
+  classifyBtn.addEventListener("click", async () => {
+    if (!selectedFile) return;
+    setLoading(classifyBtn, true, "Identifying…");
+    clearError(uploadError);
+    hideCard(cardResults);
+    hideCard(cardAsk);
+    hideCard(cardAnswer);
+
+    try {
+      const fd = new FormData();
+      fd.append("file", selectedFile);
+
+      const res = await fetch(`${CLASSIFIER_URL}/predict/`, { method: "POST", body: fd });
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+      const data = await res.json();
+      renderPredictions(data.predictions);
+      showCard(cardResults);
+      cardResults.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      showError(uploadError, `Classification failed: ${err.message}`);
+    } finally {
+      setLoading(classifyBtn, false, "Identify Breed");
+    }
+  });
+
+  // ── Render predictions ────────────────────────────────────────────────────
+  function renderPredictions(preds) {
+    predList.innerHTML = "";
+    selectedBreed = null;
+    selectBtn.disabled = true;
+
+    preds.forEach((p, i) => {
+      const pct = Math.round(p.probability * 100);
+      const item = document.createElement("label");
+      item.className = "pred-item";
+      item.innerHTML = `
+        <input type="radio" name="breed" value="${i}" />
+        <div class="pred-rank">${i + 1}</div>
+        <div class="pred-label-wrap">
+          <div class="pred-name">${p.display_name}</div>
+          <div class="pred-bar-wrap"><div class="pred-bar" style="width:${pct}%"></div></div>
         </div>
-      </div>
-      <span class="breed-pct">${(pred.prob*100).toFixed(1)}%</span>
-    `;
-    list.appendChild(div);
+        <div class="pred-pct">${pct}%</div>
+      `;
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".pred-item").forEach(el => el.classList.remove("selected"));
+        item.classList.add("selected");
+        selectedBreed = p;
+        selectBtn.disabled = false;
+      });
+      predList.appendChild(item);
+    });
+  }
+
+  // ── Move to Q&A ───────────────────────────────────────────────────────────
+  selectBtn.addEventListener("click", () => {
+    if (!selectedBreed) return;
+    qaBreedName.textContent = `🐾 ${selectedBreed.display_name}`;
+    questionInput.value = "";
+    askBtn.disabled = true;
+    clearError(askError);
+    hideCard(cardAnswer);
+    showCard(cardAsk);
+    cardAsk.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  const none = document.createElement('div');
-  none.className = 'breed-row';
-  none.onclick = () => selectBreed('none');
-  none.innerHTML = `
-    <input type="radio" name="br" id="br-none" value="none">
-    <div class="breed-info">
-      <div class="breed-name-text" style="color:var(--muted); font-style:italic">
-        None of these — enter breed manually
-      </div>
-    </div>
-  `;
-  list.appendChild(none);
-}
+  questionInput.addEventListener("input", () => {
+    askBtn.disabled = questionInput.value.trim().length < 3;
+  });
 
-let pendingBreedIdx = null;
+  // ── Ask ───────────────────────────────────────────────────────────────────
+  askBtn.addEventListener("click", async () => {
+    const question = questionInput.value.trim();
+    if (!question || !selectedBreed) return;
 
-function selectBreed(idx) {
-  document.querySelectorAll('.breed-row').forEach(r => r.classList.remove('picked'));
-  pendingBreedIdx = idx;
-  if (idx === 'none') {
-    document.getElementById('br-none').closest('.breed-row').classList.add('picked');
-    document.getElementById('br-none').checked = true;
-    show('custom-row');
-    hide('confirm-row');
-    document.getElementById('custom-breed-in').focus();
-  } else {
-    document.getElementById(`br${idx}`).closest('.breed-row').classList.add('picked');
-    document.getElementById(`br${idx}`).checked = true;
-    hide('custom-row');
-    show('confirm-row');
-  }
-}
+    setLoading(askBtn, true, "Thinking…");
+    clearError(askError);
+    hideCard(cardAnswer);
 
-window.useCustomBreed = function() {
-  const val = document.getElementById('custom-breed-in').value.trim();
-  if (!val) return;
-  selectedRaw = val;
-  openQuestionCard();
-};
+    try {
+      const res = await fetch(`${RAG_URL}/ask/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dog_breed: selectedBreed.breed,
+          question: question,
+        }),
+      });
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
 
-window.confirmBreed = function() {
-  if (pendingBreedIdx === null || pendingBreedIdx === 'none') return;
-  const radio = document.getElementById(`br${pendingBreedIdx}`);
-  selectedRaw = radio?.value;
-  if (!selectedRaw) return;
-  openQuestionCard();
-};
+      const data = await res.json();
+      answerText.textContent = data.response;
+      showCard(cardAnswer);
+      cardAnswer.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      showError(askError, `Something went wrong: ${err.message}`);
+    } finally {
+      setLoading(askBtn, false, "Ask");
+    }
+  });
 
-function openQuestionCard() {
-  document.getElementById('breed-headline').textContent = `🐕 ${breedDisplay(selectedRaw)}`;
-  show('question-card');
-  hide('answer-card');
-  document.getElementById('q-in').focus();
-}
+  // ── Post-answer actions ───────────────────────────────────────────────────
+  askAnotherBtn.addEventListener("click", () => {
+    hideCard(cardAnswer);
+    questionInput.value = "";
+    askBtn.disabled = true;
+    questionInput.focus();
+    cardAsk.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
-// ──────────────────────────────────────────────────
-// ASK
-// ──────────────────────────────────────────────────
-window.doAsk = async function() {
-  const q = document.getElementById('q-in').value.trim();
-  if (!q || !selectedRaw) return;
+  startOverBtn.addEventListener("click", () => {
+    resetUpload();
+    hideCard(cardResults);
+    hideCard(cardAsk);
+    hideCard(cardAnswer);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 
-  const { geminiKey } = cfg();
-  if (!geminiKey) {
-    alert('Please open the ⚙ config panel and enter your Gemini API key first.');
-    document.getElementById('cfg-drawer').classList.add('open');
-    return;
+  // ── Utilities ─────────────────────────────────────────────────────────────
+  function showCard(el)  { el.classList.remove("hidden"); }
+  function hideCard(el)  { el.classList.add("hidden"); }
+
+  function setLoading(btn, loading, label) {
+    btn.disabled = loading;
+    btn.innerHTML = loading
+      ? `<span class="spinner"></span>${label}`
+      : label;
   }
 
-  const btn = document.getElementById('ask-btn');
-  btn.disabled    = true;
-  btn.textContent = '…';
-
-  show('answer-card');
-  resetPipeline();
-
-  try {
-    const { answer, source } = await multiAgentRAG(selectedRaw, q);
-    document.getElementById('answer-text').textContent = answer;
-    document.getElementById('source-tag').innerHTML = source === 'kb'
-      ? '<span class="source-tag kb">📚 Knowledge base</span>'
-      : '<span class="source-tag web">🌐 Web search</span>';
-    show('answer-body');
-  } catch (e) {
-    const err = document.getElementById('answer-err');
-    err.textContent = e.message;
-    show('answer-err');
-  } finally {
-    btn.disabled    = false;
-    btn.textContent = 'Ask';
+  function showError(el, msg) {
+    el.innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`;
   }
-};
-
-// ──────────────────────────────────────────────────
-// KICK OFF
-// ──────────────────────────────────────────────────
-init();
+  function clearError(el) { el.innerHTML = ""; }
 </script>
 </body>
 </html>
