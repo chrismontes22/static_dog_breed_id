@@ -3,272 +3,418 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dog Breed Identifier</title>
+  <title>Sniff & Tell — Dog Breed Identifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* ── Variables ─────────────────────────────────────── */
     :root {
-      --amber:    #E8A44A;
-      --amber-dk: #C8862E;
-      --dark:     #1A1814;
-      --mid:      #3D3A34;
-      --muted:    #7A7670;
-      --bg:       #F7F5F0;
-      --card:     #FFFFFF;
-      --border:   #E4E0D8;
-      --radius:   14px;
-      --shadow:   0 4px 24px rgba(0,0,0,.08);
-      --shadow-lg:0 8px 40px rgba(0,0,0,.13);
-      --trans:    .22s ease;
+      --cream:      #FDF6E9;
+      --biscuit:    #F5E4C0;
+      --caramel:    #D4833B;
+      --caramel-dk: #B56B28;
+      --caramel-lt: #FDF0E0;
+      --bark:       #3B2512;
+      --bark-mid:   #7A5230;
+      --bark-lt:    #B08050;
+      --moss:       #4A7C59;
+      --moss-lt:    #EBF5EE;
+      --warm-white: #FFFDF8;
+      --border:     #E8D5B0;
+      --border-dk:  #D4BC90;
+      --shadow-sm:  0 2px 12px rgba(59,37,18,.08);
+      --shadow-md:  0 6px 28px rgba(59,37,18,.12);
+      --radius:     18px;
+      --radius-sm:  10px;
     }
 
-    /* ── Reset & base ──────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--dark);
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--bark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg opacity='0.045' fill='%23B56B28'%3E%3Cellipse cx='20' cy='20' rx='4' ry='5'/%3E%3Cellipse cx='28' cy='17' rx='3.5' ry='4.5'/%3E%3Cellipse cx='13' cy='17' rx='3.5' ry='4.5'/%3E%3Cellipse cx='16' cy='26' rx='3' ry='3.5'/%3E%3Cellipse cx='24' cy='26' rx='3' ry='3.5'/%3E%3Cellipse cx='20' cy='30' rx='6' ry='5'/%3E%3Cellipse cx='60' cy='60' rx='4' ry='5'/%3E%3Cellipse cx='68' cy='57' rx='3.5' ry='4.5'/%3E%3Cellipse cx='53' cy='57' rx='3.5' ry='4.5'/%3E%3Cellipse cx='56' cy='66' rx='3' ry='3.5'/%3E%3Cellipse cx='64' cy='66' rx='3' ry='3.5'/%3E%3Cellipse cx='60' cy='70' rx='6' ry='5'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    /* ── Layout ────────────────────────────────────────── */
+    /* ── Header ──────────────────────────────────────────── */
     header {
-      width: 100%; background: var(--dark);
-      padding: 1.25rem 2rem;
-      display: flex; align-items: center; gap: .75rem;
+      width: 100%;
+      background: var(--bark);
+      padding: 1.5rem 2rem 1.8rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    header span { font-size: 1.75rem; }
-    header h1 { color: var(--amber); font-size: 1.25rem; font-weight: 700; letter-spacing: -.3px; }
-    header p  { color: var(--muted); font-size: .8rem; margin-top: 1px; }
+    header::after {
+      content: '';
+      position: absolute; bottom: -1px; left: 0; right: 0; height: 24px;
+      background: var(--cream);
+      clip-path: ellipse(55% 100% at 50% 100%);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg opacity='0.045' fill='%23B56B28'%3E%3Cellipse cx='20' cy='20' rx='4' ry='5'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .header-paws {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      opacity: .06; font-size: 2rem; overflow: hidden;
+      display: flex; flex-wrap: wrap; gap: 2rem; padding: 1rem;
+      pointer-events: none;
+    }
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      color: var(--caramel);
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      letter-spacing: .5px;
+      position: relative;
+    }
+    header p {
+      color: var(--biscuit);
+      font-size: .9rem;
+      margin-top: .4rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      position: relative;
+    }
+    .paw-icon {
+      display: inline-block;
+      font-size: 1.4rem;
+      margin: 0 .35rem;
+      animation: wobble 3s ease-in-out infinite;
+    }
+    @keyframes wobble {
+      0%,100% { transform: rotate(-8deg); }
+      50%      { transform: rotate(8deg); }
+    }
 
+    /* ── Steps bar ───────────────────────────────────────── */
+    .steps-bar {
+      display: flex; align-items: center; gap: 0;
+      width: 100%; max-width: 560px;
+      margin: 1.6rem auto .2rem;
+      padding: 0 1.25rem;
+    }
+    .step-dot {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      background: var(--warm-white); border: 2.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 800; color: var(--bark-lt);
+      transition: all .3s;
+    }
+    .step-dot.active  { background: var(--caramel); border-color: var(--caramel); color: #fff; transform: scale(1.1); }
+    .step-dot.done    { background: var(--moss); border-color: var(--moss); color: #fff; }
+    .step-dot.done::after { content: '✓'; font-size: .8rem; }
+    .step-dot:not(.done) span { display: block; }
+    .step-dot.done span { display: none; }
+    .step-line {
+      flex: 1; height: 3px; background: var(--border);
+      transition: background .3s;
+    }
+    .step-line.done { background: var(--moss); }
+
+    /* ── Main ────────────────────────────────────────────── */
     main {
-      width: 100%; max-width: 620px;
-      padding: 2.5rem 1.25rem 4rem;
-      display: flex; flex-direction: column; gap: 2rem;
+      width: 100%; max-width: 580px;
+      padding: 1.5rem 1.25rem 5rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
     }
 
-    /* ── Cards ─────────────────────────────────────────── */
+    /* ── Cards ───────────────────────────────────────────── */
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: var(--warm-white);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.75rem;
-      box-shadow: var(--shadow);
-      transition: opacity var(--trans);
+      padding: 1.6rem 1.75rem;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp .35s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
     .card.hidden { display: none; }
-    .card h2 {
-      font-size: .7rem; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--muted);
-      margin-bottom: 1.1rem;
+
+    .card-label {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .68rem; font-weight: 800; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--bark-lt);
+      margin-bottom: 1.2rem;
+      background: var(--biscuit);
+      padding: .3rem .7rem; border-radius: 99px;
+    }
+    .card-label .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--caramel);
     }
 
-    /* ── Upload zone ────────────────────────────────────── */
+    /* ── Upload zone ─────────────────────────────────────── */
     .upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 2.5rem 1rem;
+      border: 2.5px dashed var(--border-dk);
+      border-radius: var(--radius-sm);
+      padding: 2.5rem 1rem 2rem;
       text-align: center;
       cursor: pointer;
-      transition: border-color var(--trans), background var(--trans);
+      transition: border-color .2s, background .2s, transform .2s;
+      background: var(--cream);
     }
     .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--amber);
-      background: #FEF8EE;
+      border-color: var(--caramel);
+      background: var(--caramel-lt);
+      transform: scale(1.01);
     }
     .upload-zone input { display: none; }
-    .upload-zone .icon { font-size: 2.5rem; margin-bottom: .6rem; }
-    .upload-zone p { color: var(--muted); font-size: .9rem; }
-    .upload-zone strong { color: var(--amber); }
+    .upload-zone .dog-icon {
+      font-size: 3.5rem; line-height: 1;
+      margin-bottom: .6rem; display: block;
+      animation: sniff 2.5s ease-in-out infinite;
+    }
+    @keyframes sniff {
+      0%,100% { transform: translateY(0); }
+      40%     { transform: translateY(-6px); }
+      60%     { transform: translateY(-3px); }
+    }
+    .upload-zone .upload-text { color: var(--bark-mid); font-size: .95rem; font-weight: 600; }
+    .upload-zone strong { color: var(--caramel); }
 
-    /* ── Preview ────────────────────────────────────────── */
+    /* ── Preview ─────────────────────────────────────────── */
     #preview-wrap {
-      position: relative; text-align: center; margin-top: 1.25rem;
+      position: relative; text-align: center; margin-top: 1.1rem;
       display: none;
     }
     #preview-wrap img {
-      width: 100%; max-height: 320px; object-fit: cover;
-      border-radius: 10px; display: block;
+      width: 100%; height: auto;
+      max-height: 480px;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
+      display: block;
+      background: var(--biscuit);
     }
-    #preview-wrap button.clear-btn {
+    .clear-btn {
       position: absolute; top: 8px; right: 8px;
-      background: rgba(26,24,20,.65); color: #fff;
-      border: none; border-radius: 50%; width: 28px; height: 28px;
-      font-size: 1rem; cursor: pointer; display: flex;
-      align-items: center; justify-content: center;
+      background: rgba(59,37,18,.7); color: #fff;
+      border: none; border-radius: 50%; width: 30px; height: 30px;
+      font-size: .95rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
     }
+    .clear-btn:hover { background: var(--bark); }
 
-    /* ── Primary button ─────────────────────────────────── */
+    /* ── Primary button ──────────────────────────────────── */
     .btn {
-      width: 100%; padding: .85rem 1rem;
-      background: var(--amber); color: var(--dark);
-      border: none; border-radius: 8px;
-      font-size: 1rem; font-weight: 700;
-      cursor: pointer;
-      transition: background var(--trans), transform var(--trans);
-      margin-top: 1.25rem;
+      width: 100%; padding: .9rem 1rem;
+      background: var(--caramel);
+      color: #fff;
+      border: none; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem; font-weight: 800;
+      cursor: pointer; margin-top: 1.1rem;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 0 var(--caramel-dk);
+      letter-spacing: .02em;
     }
-    .btn:hover:not(:disabled) { background: var(--amber-dk); }
-    .btn:active:not(:disabled) { transform: scale(.98); }
-    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn:hover:not(:disabled) {
+      background: var(--caramel-dk);
+      box-shadow: 0 2px 0 var(--caramel-dk);
+      transform: translateY(2px);
+    }
+    .btn:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
 
     /* ── Spinner ─────────────────────────────────────────── */
     .spinner {
       display: inline-block; width: 18px; height: 18px;
-      border: 2.5px solid rgba(26,24,20,.2);
-      border-top-color: var(--dark);
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
       border-radius: 50%;
       animation: spin .7s linear infinite;
       vertical-align: middle; margin-right: 8px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Prediction cards ───────────────────────────────── */
+    /* ── Predictions ─────────────────────────────────────── */
     .pred-list { display: flex; flex-direction: column; gap: .75rem; }
     .pred-item {
-      display: flex; align-items: center; gap: 1rem;
-      padding: 1rem 1.1rem;
+      display: flex; align-items: center; gap: .9rem;
+      padding: .95rem 1.1rem;
       border: 2px solid var(--border);
-      border-radius: 10px; cursor: pointer;
-      transition: border-color var(--trans), background var(--trans);
+      border-radius: var(--radius-sm); cursor: pointer;
+      transition: border-color .2s, background .2s, transform .2s;
+      background: var(--cream);
     }
-    .pred-item:hover { border-color: var(--amber); background: #FEF8EE; }
-    .pred-item.selected { border-color: var(--amber); background: #FEF8EE; }
+    .pred-item:hover   { border-color: var(--caramel); background: var(--caramel-lt); transform: translateX(3px); }
+    .pred-item.selected{ border-color: var(--caramel); background: var(--caramel-lt); transform: translateX(3px); }
     .pred-item input[type=radio] { display: none; }
     .pred-rank {
-      min-width: 28px; height: 28px;
-      background: var(--bg); border-radius: 50%;
+      min-width: 30px; height: 30px; border-radius: 50%;
+      background: var(--biscuit); border: 2px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: .75rem; font-weight: 700; color: var(--muted);
+      font-size: .75rem; font-weight: 800; color: var(--bark-lt);
+      transition: all .2s;
     }
-    .pred-item.selected .pred-rank { background: var(--amber); color: var(--dark); }
-    .pred-name { flex: 1; font-weight: 600; font-size: 1rem; }
-    .pred-pct {
-      font-size: .85rem; font-weight: 700; color: var(--amber);
-    }
+    .pred-item.selected .pred-rank { background: var(--caramel); border-color: var(--caramel); color: #fff; }
+    .pred-name { flex: 1; font-weight: 700; font-size: 1rem; color: var(--bark); }
+    .pred-pct  { font-size: .85rem; font-weight: 800; color: var(--caramel); }
     .pred-bar-wrap {
-      width: 100%; height: 4px; background: var(--border);
-      border-radius: 99px; margin-top: 4px; overflow: hidden;
+      width: 100%; height: 5px; background: var(--border);
+      border-radius: 99px; margin-top: 5px; overflow: hidden;
     }
-    .pred-bar { height: 100%; background: var(--amber); border-radius: 99px; }
+    .pred-bar { height: 100%; background: linear-gradient(90deg, var(--caramel), var(--caramel-dk)); border-radius: 99px; }
     .pred-label-wrap { flex: 1; }
 
-    /* ── Question area ──────────────────────────────────── */
-    .qa-breed-label {
-      font-size: 1.2rem; font-weight: 700; color: var(--dark);
-      margin-bottom: .25rem;
+    /* ── Question area ───────────────────────────────────── */
+    .breed-hero {
+      background: linear-gradient(135deg, var(--bark) 0%, var(--bark-mid) 100%);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.2rem;
+      display: flex; align-items: center; gap: .75rem;
+      margin-bottom: 1.1rem;
     }
-    .qa-sub { font-size: .85rem; color: var(--muted); margin-bottom: 1.1rem; }
-    .qa-input-wrap { position: relative; }
+    .breed-hero-icon { font-size: 2rem; }
+    .breed-hero h3 {
+      font-family: 'Pacifico', cursive;
+      color: var(--caramel);
+      font-size: 1.25rem;
+    }
+    .breed-hero p { color: var(--biscuit); font-size: .8rem; font-weight: 600; margin-top: 2px; }
     textarea {
-      width: 100%; min-height: 88px;
-      padding: .9rem 1rem; border: 1.5px solid var(--border);
-      border-radius: 8px; font-size: 1rem; resize: vertical;
-      font-family: inherit; color: var(--dark); background: var(--bg);
-      transition: border-color var(--trans);
+      width: 100%; min-height: 90px;
+      padding: .9rem 1rem; border: 2px solid var(--border);
+      border-radius: var(--radius-sm); font-size: .97rem; resize: vertical;
+      font-family: 'Nunito', sans-serif; color: var(--bark); background: var(--cream);
+      transition: border-color .2s, background .2s;
       outline: none;
     }
-    textarea:focus { border-color: var(--amber); background: #fff; }
+    textarea:focus { border-color: var(--caramel); background: var(--warm-white); }
+    textarea::placeholder { color: var(--bark-lt); }
 
-    /* ── Answer bubble ──────────────────────────────────── */
-    .answer-box {
-      background: var(--bg); border-left: 4px solid var(--amber);
-      border-radius: 0 10px 10px 0;
-      padding: 1.1rem 1.2rem;
-      font-size: .97rem; line-height: 1.6; color: var(--mid);
+    /* ── Answer ──────────────────────────────────────────── */
+    .answer-bubble {
+      background: var(--cream);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.2rem 1.3rem;
+      font-size: .97rem; line-height: 1.7;
+      color: var(--bark);
+      position: relative;
     }
-    .answer-actions {
-      display: flex; gap: .75rem; margin-top: 1rem;
+    .answer-bubble::before {
+      content: '🐾';
+      position: absolute; top: -16px; left: 16px;
+      font-size: 1.5rem;
     }
+    .answer-actions { display: flex; gap: .75rem; margin-top: 1rem; }
     .btn-ghost {
       flex: 1; padding: .65rem;
-      background: transparent; border: 1.5px solid var(--border);
-      border-radius: 8px; font-size: .85rem; font-weight: 600;
-      cursor: pointer; color: var(--mid);
-      transition: border-color var(--trans), color var(--trans);
+      background: transparent; border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-size: .85rem; font-weight: 700;
+      cursor: pointer; color: var(--bark-mid);
+      transition: border-color .2s, color .2s, background .2s;
     }
-    .btn-ghost:hover { border-color: var(--amber); color: var(--dark); }
+    .btn-ghost:hover { border-color: var(--caramel); color: var(--bark); background: var(--caramel-lt); }
 
     /* ── Error ───────────────────────────────────────────── */
     .error-msg {
-      background: #FFF1F0; border: 1px solid #FFC9C4;
-      color: #C0392B; border-radius: 8px;
+      background: #FFF1F0; border: 1.5px solid #FFC9C4;
+      color: #B03020; border-radius: var(--radius-sm);
       padding: .8rem 1rem; font-size: .88rem; margin-top: .75rem;
+      font-weight: 600;
+    }
+
+    /* ── Footer bone divider ─────────────────────────────── */
+    .footer-paws {
+      text-align: center; margin-top: auto;
+      padding: 2rem 0 1rem;
+      color: var(--bark-lt); font-size: .78rem; font-weight: 600;
+      letter-spacing: .04em;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <span>🐕</span>
-  <div>
-    <h1>Dog Breed Identifier</h1>
-    <p>Upload a photo · identify the breed · ask anything</p>
+  <div class="header-paws" aria-hidden="true">
+    🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾
   </div>
+  <h1><span class="paw-icon">🐾</span> Sniff &amp; Tell <span class="paw-icon">🐾</span></h1>
+  <p>Upload a photo · discover the breed · ask anything</p>
 </header>
+
+<!-- Step indicators -->
+<div class="steps-bar" id="steps-bar" role="progressbar" aria-label="Steps">
+  <div class="step-dot active" id="dot-1"><span>1</span></div>
+  <div class="step-line" id="line-1"></div>
+  <div class="step-dot" id="dot-2"><span>2</span></div>
+  <div class="step-line" id="line-2"></div>
+  <div class="step-dot" id="dot-3"><span>3</span></div>
+  <div class="step-line" id="line-3"></div>
+  <div class="step-dot" id="dot-4"><span>4</span></div>
+</div>
 
 <main>
 
   <!-- Step 1 — Upload -->
   <div class="card" id="card-upload">
-    <h2>Step 1 — Upload a photo</h2>
+    <div class="card-label"><div class="dot"></div> Upload a photo</div>
 
     <div class="upload-zone" id="drop-zone">
       <input type="file" id="file-input" accept="image/*" />
-      <div class="icon">📷</div>
-      <p>Drag &amp; drop a photo here, or <strong>click to browse</strong></p>
+      <span class="dog-icon" aria-hidden="true">🐶</span>
+      <p class="upload-text">Drop your dog's photo here,<br>or <strong>tap to browse</strong></p>
     </div>
 
     <div id="preview-wrap">
-      <img id="preview-img" src="" alt="Dog preview" />
-      <button class="clear-btn" id="clear-btn" title="Remove image">✕</button>
+      <img id="preview-img" src="" alt="Your dog" />
+      <button class="clear-btn" id="clear-btn" title="Remove image" aria-label="Remove image">✕</button>
     </div>
 
     <div id="upload-error"></div>
-    <button class="btn" id="classify-btn" disabled>Identify Breed</button>
+    <button class="btn" id="classify-btn" disabled>🔍 Identify Breed</button>
   </div>
 
   <!-- Step 2 — Predictions -->
   <div class="card hidden" id="card-results">
-    <h2>Step 2 — Select the correct breed</h2>
+    <div class="card-label"><div class="dot"></div> Which breed is this?</div>
     <div class="pred-list" id="pred-list"></div>
     <div id="results-error"></div>
-    <button class="btn" id="select-btn" disabled>Ask a Question →</button>
+    <button class="btn" id="select-btn" disabled>Ask a Question 🐾</button>
   </div>
 
   <!-- Step 3 — Ask -->
   <div class="card hidden" id="card-ask">
-    <h2>Step 3 — Ask anything</h2>
-    <div class="qa-breed-label" id="qa-breed-name"></div>
-    <p class="qa-sub">What would you like to know about this breed?</p>
-    <div class="qa-input-wrap">
-      <textarea id="question-input" placeholder="e.g. How much exercise does this breed need?"></textarea>
+    <div class="card-label"><div class="dot"></div> Ask anything</div>
+    <div class="breed-hero">
+      <div class="breed-hero-icon" aria-hidden="true">🦴</div>
+      <div>
+        <h3 id="qa-breed-name"></h3>
+        <p>What would you like to know?</p>
+      </div>
     </div>
+    <textarea id="question-input" placeholder="e.g. How much exercise does this breed need?"></textarea>
     <div id="ask-error"></div>
-    <button class="btn" id="ask-btn" disabled>Ask</button>
+    <button class="btn" id="ask-btn" disabled>Ask! 🐾</button>
   </div>
 
   <!-- Step 4 — Answer -->
   <div class="card hidden" id="card-answer">
-    <h2>Answer</h2>
-    <div class="answer-box" id="answer-text"></div>
+    <div class="card-label"><div class="dot"></div> Here's the scoop</div>
+    <div class="answer-bubble" id="answer-text"></div>
     <div class="answer-actions">
-      <button class="btn-ghost" id="ask-another-btn">Ask another question</button>
+      <button class="btn-ghost" id="ask-another-btn">Ask another</button>
       <button class="btn-ghost" id="start-over-btn">Start over</button>
     </div>
   </div>
 
 </main>
 
-<script>
-  /* ── CONFIG — update these after deploying your two APIs ──────────────── */
-  const CLASSIFIER_URL = "https://dog-image-classifier.onrender.com";   // Render URL
-  const RAG_URL        = "https://your-rag.koyeb.app";             // Koyeb URL
-  /* ─────────────────────────────────────────────────────────────────────── */
+<div class="footer-paws">🐾 &nbsp; made with love for dog lovers &nbsp; 🐾</div>
 
-  // ── DOM refs ──────────────────────────────────────────────────────────────
+<script>
+  const CLASSIFIER_URL = "https://dog-image-classifier.onrender.com";
+  const RAG_URL        = "https://your-rag.koyeb.app";
+
   const dropZone      = document.getElementById("drop-zone");
   const fileInput     = document.getElementById("file-input");
   const previewWrap   = document.getElementById("preview-wrap");
@@ -276,44 +422,42 @@
   const clearBtn      = document.getElementById("clear-btn");
   const classifyBtn   = document.getElementById("classify-btn");
   const uploadError   = document.getElementById("upload-error");
-
   const cardResults   = document.getElementById("card-results");
   const predList      = document.getElementById("pred-list");
   const selectBtn     = document.getElementById("select-btn");
   const resultsError  = document.getElementById("results-error");
-
   const cardAsk       = document.getElementById("card-ask");
   const qaBreedName   = document.getElementById("qa-breed-name");
   const questionInput = document.getElementById("question-input");
   const askBtn        = document.getElementById("ask-btn");
   const askError      = document.getElementById("ask-error");
-
   const cardAnswer    = document.getElementById("card-answer");
   const answerText    = document.getElementById("answer-text");
   const askAnotherBtn = document.getElementById("ask-another-btn");
   const startOverBtn  = document.getElementById("start-over-btn");
 
-  // ── State ─────────────────────────────────────────────────────────────────
-  let selectedFile   = null;
-  let selectedBreed  = null;  // { breed, display_name }
+  let selectedFile  = null;
+  let selectedBreed = null;
 
-  // ── File selection ────────────────────────────────────────────────────────
+  function setStep(n) {
+    for (let i = 1; i <= 4; i++) {
+      const dot  = document.getElementById(`dot-${i}`);
+      const line = document.getElementById(`line-${i}`);
+      dot.classList.remove("active","done");
+      if (i < n)       dot.classList.add("done");
+      else if (i === n) dot.classList.add("active");
+      if (line) line.classList.toggle("done", i < n);
+    }
+  }
+
   dropZone.addEventListener("click", () => fileInput.click());
-
-  dropZone.addEventListener("dragover", e => {
-    e.preventDefault(); dropZone.classList.add("drag-over");
-  });
+  dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
   dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
   dropZone.addEventListener("drop", e => {
     e.preventDefault(); dropZone.classList.remove("drag-over");
-    const file = e.dataTransfer.files[0];
-    if (file) loadFile(file);
+    if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
   });
-
-  fileInput.addEventListener("change", () => {
-    if (fileInput.files[0]) loadFile(fileInput.files[0]);
-  });
-
+  fileInput.addEventListener("change", () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
   clearBtn.addEventListener("click", resetUpload);
 
   function loadFile(file) {
@@ -322,14 +466,14 @@
       return;
     }
     selectedFile = file;
-    const url = URL.createObjectURL(file);
-    previewImg.src = url;
+    previewImg.src = URL.createObjectURL(file);
     previewWrap.style.display = "block";
     classifyBtn.disabled = false;
     clearError(uploadError);
     hideCard(cardResults);
     hideCard(cardAsk);
     hideCard(cardAnswer);
+    setStep(1);
   }
 
   function resetUpload() {
@@ -342,48 +486,45 @@
     hideCard(cardResults);
     hideCard(cardAsk);
     hideCard(cardAnswer);
+    setStep(1);
   }
 
-  // ── Classify ──────────────────────────────────────────────────────────────
   classifyBtn.addEventListener("click", async () => {
     if (!selectedFile) return;
-    setLoading(classifyBtn, true, "Identifying…");
+    setLoading(classifyBtn, true, "Sniffing…");
     clearError(uploadError);
     hideCard(cardResults);
     hideCard(cardAsk);
     hideCard(cardAnswer);
-
     try {
       const fd = new FormData();
       fd.append("file", selectedFile);
-
       const res = await fetch(`${CLASSIFIER_URL}/predict/`, { method: "POST", body: fd });
       if (!res.ok) throw new Error(`Server error ${res.status}`);
-
       const data = await res.json();
       renderPredictions(data.predictions);
       showCard(cardResults);
+      setStep(2);
       cardResults.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       showError(uploadError, `Classification failed: ${err.message}`);
     } finally {
-      setLoading(classifyBtn, false, "Identify Breed");
+      setLoading(classifyBtn, false, "🔍 Identify Breed");
     }
   });
 
-  // ── Render predictions ────────────────────────────────────────────────────
   function renderPredictions(preds) {
     predList.innerHTML = "";
     selectedBreed = null;
     selectBtn.disabled = true;
-
+    const medals = ["🥇","🥈","🥉"];
     preds.forEach((p, i) => {
-      const pct = Math.round(p.probability * 100);
+      const pct  = Math.round(p.probability * 100);
       const item = document.createElement("label");
       item.className = "pred-item";
       item.innerHTML = `
         <input type="radio" name="breed" value="${i}" />
-        <div class="pred-rank">${i + 1}</div>
+        <div class="pred-rank">${medals[i] || i+1}</div>
         <div class="pred-label-wrap">
           <div class="pred-name">${p.display_name}</div>
           <div class="pred-bar-wrap"><div class="pred-bar" style="width:${pct}%"></div></div>
@@ -400,15 +541,15 @@
     });
   }
 
-  // ── Move to Q&A ───────────────────────────────────────────────────────────
   selectBtn.addEventListener("click", () => {
     if (!selectedBreed) return;
-    qaBreedName.textContent = `🐾 ${selectedBreed.display_name}`;
+    qaBreedName.textContent = selectedBreed.display_name;
     questionInput.value = "";
     askBtn.disabled = true;
     clearError(askError);
     hideCard(cardAnswer);
     showCard(cardAsk);
+    setStep(3);
     cardAsk.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
@@ -416,42 +557,36 @@
     askBtn.disabled = questionInput.value.trim().length < 3;
   });
 
-  // ── Ask ───────────────────────────────────────────────────────────────────
   askBtn.addEventListener("click", async () => {
     const question = questionInput.value.trim();
     if (!question || !selectedBreed) return;
-
-    setLoading(askBtn, true, "Thinking…");
+    setLoading(askBtn, true, "Fetching treats…");
     clearError(askError);
     hideCard(cardAnswer);
-
     try {
       const res = await fetch(`${RAG_URL}/ask/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          dog_breed: selectedBreed.breed,
-          question: question,
-        }),
+        body: JSON.stringify({ dog_breed: selectedBreed.breed, question }),
       });
       if (!res.ok) throw new Error(`Server error ${res.status}`);
-
       const data = await res.json();
       answerText.textContent = data.response;
       showCard(cardAnswer);
+      setStep(4);
       cardAnswer.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       showError(askError, `Something went wrong: ${err.message}`);
     } finally {
-      setLoading(askBtn, false, "Ask");
+      setLoading(askBtn, false, "Ask! 🐾");
     }
   });
 
-  // ── Post-answer actions ───────────────────────────────────────────────────
   askAnotherBtn.addEventListener("click", () => {
     hideCard(cardAnswer);
     questionInput.value = "";
     askBtn.disabled = true;
+    setStep(3);
     questionInput.focus();
     cardAsk.scrollIntoView({ behavior: "smooth", block: "start" });
   });
@@ -464,21 +599,16 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // ── Utilities ─────────────────────────────────────────────────────────────
-  function showCard(el)  { el.classList.remove("hidden"); }
-  function hideCard(el)  { el.classList.add("hidden"); }
+  function showCard(el) { el.classList.remove("hidden"); }
+  function hideCard(el) { el.classList.add("hidden"); }
 
   function setLoading(btn, loading, label) {
     btn.disabled = loading;
-    btn.innerHTML = loading
-      ? `<span class="spinner"></span>${label}`
-      : label;
+    btn.innerHTML = loading ? `<span class="spinner"></span>${label}` : label;
   }
 
-  function showError(el, msg) {
-    el.innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`;
-  }
-  function clearError(el) { el.innerHTML = ""; }
+  function showError(el, msg) { el.innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`; }
+  function clearError(el)     { el.innerHTML = ""; }
 </script>
 </body>
 </html>
