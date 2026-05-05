@@ -3,420 +3,1130 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sniff & Tell — Dog Breed Identifier</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- ══ SECURITY: Policy headers via meta tags ══ -->
+  <!--
+    DEPLOY NOTE: For production, set these as HTTP response headers instead of
+    meta tags — meta CSP is NOT enforced by all browsers for all directives.
+    Recommended headers to add in your Cloudflare Pages / server config:
+      Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob: data:; connect-src https://chrismontes-dog-image-classifier-backend.hf.space https://chrismontes-dog-rag-backend.hf.space; frame-ancestors 'none';
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: DENY
+      Referrer-Policy: strict-origin-when-cross-origin
+      Permissions-Policy: camera=(), microphone=(), geolocation=()
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline';
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                 font-src https://fonts.gstatic.com;
+                 img-src 'self' blob: data:;
+                 connect-src https://chrismontes-dog-image-classifier-backend.hf.space
+                             https://chrismontes-dog-rag-backend.hf.space;
+                 frame-ancestors 'none';" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
+
+  <!-- ══ SEO: Core ══ -->
+  <title>Sniff &amp; Tell — AI Dog Breed Identifier | Identify Any Dog Breed Instantly</title>
+  <meta name="description" content="Sniff &amp; Tell uses AI to identify your dog's breed from a photo in seconds. Upload a picture, get the top breed matches, and ask anything about temperament, exercise, grooming, diet, and more." />
+  <meta name="keywords" content="dog breed identifier, what breed is my dog, dog breed detector, mixed breed dog identifier, identify dog breed from photo, dog breed finder, dog breed recognition, what is my dog mixed with, dog breed test free, AI pet identification" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Sniff &amp; Tell" />
+  <link rel="canonical" href="https://sniff-and-tell.pages.dev/" />
+
+  <!-- ══ SEO: Browser / PWA hints ══ -->
+  <meta name="theme-color" content="#1B3D2F" />
+  <meta name="application-name" content="Sniff &amp; Tell" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- ══ Performance: DNS prefetch + preconnect ══ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://chrismontes-dog-image-classifier-backend.hf.space" />
+  <link rel="dns-prefetch" href="https://chrismontes-dog-rag-backend.hf.space" />
+
+  <!-- ══ Performance: Preload breed list ══ -->
+  <link rel="preload" href="/Dog_List.txt" as="fetch" crossorigin="anonymous" />
+
+  <!-- ══ SEO: Open Graph ══ -->
+  <meta property="og:type"         content="website" />
+  <meta property="og:url"          content="https://sniff-and-tell.pages.dev/" />
+  <meta property="og:title"        content="Sniff &amp; Tell — AI Dog Breed Identifier" />
+  <meta property="og:description"  content="Upload a dog photo and our AI instantly identifies the breed. Then ask anything — exercise needs, grooming tips, temperament, diet and more." />
+  <meta property="og:image"        content="https://sniff-and-tell.pages.dev/og-image.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"    content="Sniff &amp; Tell — AI dog breed identifier app screenshot" />
+  <meta property="og:site_name"    content="Sniff &amp; Tell" />
+  <meta property="og:locale"       content="en_US" />
+
+  <!-- ══ SEO: Twitter Card ══ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Sniff &amp; Tell — AI Dog Breed Identifier" />
+  <meta name="twitter:description" content="Upload a dog photo and our AI instantly identifies the breed. Ask anything about your dog's breed!" />
+  <meta name="twitter:image"       content="https://sniff-and-tell.pages.dev/og-image.png" />
+
+  <!-- ══ SEO: Structured Data — WebSite ══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Sniff & Tell",
+    "url": "https://sniff-and-tell.pages.dev/",
+    "description": "AI-powered dog breed identifier. Upload a photo to discover the breed, then ask anything about temperament, exercise, grooming, and diet.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://sniff-and-tell.pages.dev/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- ══ SEO: Structured Data — WebApplication ══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sniff & Tell",
+    "url": "https://sniff-and-tell.pages.dev/",
+    "description": "AI-powered dog breed identifier. Upload a photo to discover the breed, then ask anything about temperament, exercise, grooming, and diet.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "image": "https://sniff-and-tell.pages.dev/og-image.png",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Dog breed identification from photos",
+      "AI-powered Q&A about dog breeds",
+      "73 recognisable breeds",
+      "Instant results"
+    ]
+  }
+  </script>
+
+  <!-- ══ SEO: Structured Data — HowTo ══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to identify your dog's breed with Sniff & Tell",
+    "description": "Use AI to identify your dog's breed from a photo in four simple steps.",
+    "totalTime": "PT2M",
+    "estimatedCost": { "@type": "MonetaryAmount", "currency": "USD", "value": "0" },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Upload a photo",
+        "text": "Drop or select a clear photo of your dog. JPG, PNG, and WebP are all supported."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Identify the breed",
+        "text": "Click 'Identify Breed' and our AI returns the top 3 most likely breeds with confidence scores. Select the best match."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Ask a question",
+        "text": "Type any question about the identified breed — exercise needs, temperament, grooming, diet, or health."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Get your answer",
+        "text": "Receive a clear, helpful answer sourced from our dog knowledge base or live web search."
+      }
+    ]
+  }
+  </script>
+
+  <!-- ══ SEO: Structured Data — FAQPage ══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I identify my dog's breed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Simply upload a clear photo of your dog on Sniff & Tell. Our AI model analyses the image and returns the top 3 most likely breeds with confidence scores."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What dog breeds can Sniff & Tell identify?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sniff & Tell can identify 73 different dog breeds including popular breeds like Labrador Retriever, German Shepherd, Corgi, French Bulldog, and many more."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I ask questions about a dog breed after identification?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! After identifying the breed, you can ask anything — exercise requirements, temperament, grooming needs, diet tips, health concerns, and more. Our AI knowledge base provides detailed, helpful answers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Sniff & Tell free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Sniff & Tell is completely free. No account, sign-up, or credit card is required. Simply upload a photo and get instant AI breed identification."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How accurate is the dog breed identifier?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sniff & Tell uses a deep learning model trained on 73 dog breeds. For best results, upload a clear, well-lit photo of your dog. The AI returns the top 3 most likely breeds with confidence scores so you can pick the best match."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Sniff & Tell store or save my photos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Your photo is sent directly to the breed classifier and discarded immediately after prediction. We never store, retain, or use your images for any other purpose."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --cream:      #FDF6E9;
-      --biscuit:    #F5E4C0;
-      --caramel:    #D4833B;
-      --caramel-dk: #B56B28;
-      --caramel-lt: #FDF0E0;
-      --bark:       #3B2512;
-      --bark-mid:   #7A5230;
-      --bark-lt:    #B08050;
-      --moss:       #4A7C59;
-      --moss-lt:    #EBF5EE;
-      --warm-white: #FFFDF8;
-      --border:     #E8D5B0;
-      --border-dk:  #D4BC90;
-      --shadow-sm:  0 2px 12px rgba(59,37,18,.08);
-      --shadow-md:  0 6px 28px rgba(59,37,18,.12);
-      --radius:     18px;
-      --radius-sm:  10px;
+      --forest:      #1B3D2F;
+      --forest-mid:  #2E5E47;
+      --forest-lt:   #4A8C68;
+      --mint-bg:     #EFF7F3;
+      --mint-mid:    #C8E6D8;
+      --mint-lt:     #F5FBF8;
+      --gold:        #E8A844;
+      --gold-dk:     #C48A28;
+      --gold-lt:     #FDF4E3;
+      --white:       #FFFFFF;
+      --ink:         #0F2119;
+      --ink-mid:     #3A5C4A;
+      --ink-lt:      #7A9E8C;
+      --border:      #C8DDD5;
+      --border-dk:   #A8C4B8;
+      --shadow-sm:   0 2px 14px rgba(15,33,25,.07);
+      --shadow-md:   0 6px 30px rgba(15,33,25,.11);
+      --radius:      20px;
+      --radius-sm:   12px;
+      --radius-xs:   8px;
+      --src-kb-bg:   #E8F5F0; --src-kb-border: #A8D5C2; --src-kb-text: #1B6B4A;
+      --src-web-bg:  #E8F0FA; --src-web-border:#A8C0E8; --src-web-text: #1A3F88;
+      --src-blk-bg:  #FDF4E3; --src-blk-border:#F0D098; --src-blk-text: #8A5A10;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--cream);
-      color: var(--bark);
+      font-family: 'DM Sans', sans-serif;
+      background: var(--mint-bg);
+      color: var(--ink);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg opacity='0.045' fill='%23B56B28'%3E%3Cellipse cx='20' cy='20' rx='4' ry='5'/%3E%3Cellipse cx='28' cy='17' rx='3.5' ry='4.5'/%3E%3Cellipse cx='13' cy='17' rx='3.5' ry='4.5'/%3E%3Cellipse cx='16' cy='26' rx='3' ry='3.5'/%3E%3Cellipse cx='24' cy='26' rx='3' ry='3.5'/%3E%3Cellipse cx='20' cy='30' rx='6' ry='5'/%3E%3Cellipse cx='60' cy='60' rx='4' ry='5'/%3E%3Cellipse cx='68' cy='57' rx='3.5' ry='4.5'/%3E%3Cellipse cx='53' cy='57' rx='3.5' ry='4.5'/%3E%3Cellipse cx='56' cy='66' rx='3' ry='3.5'/%3E%3Cellipse cx='64' cy='66' rx='3' ry='3.5'/%3E%3Cellipse cx='60' cy='70' rx='6' ry='5'/%3E%3C/g%3E%3C/svg%3E");
+      display: flex; flex-direction: column; align-items: center;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg opacity='0.05' fill='%232E5E47'%3E%3Cellipse cx='15' cy='15' rx='3' ry='5' transform='rotate(-30 15 15)'/%3E%3Cellipse cx='45' cy='45' rx='3' ry='5' transform='rotate(-30 45 45)'/%3E%3Cellipse cx='45' cy='15' rx='2' ry='4' transform='rotate(30 45 15)'/%3E%3Cellipse cx='15' cy='45' rx='2' ry='4' transform='rotate(30 15 45)'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    /* ── Header ──────────────────────────────────────────── */
+    /* ══ STATUS BAR ══ */
+    #status-bar {
+      width: 100%;
+      background: var(--forest);
+      padding: .5rem 1.5rem;
+      display: flex; align-items: center; justify-content: center; gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .srv-chip {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .72rem; font-weight: 600; letter-spacing: .04em;
+    }
+    .srv-label { color: rgba(255,255,255,.45); text-transform: uppercase; font-size: .63rem; letter-spacing: .09em; }
+    .srv-status { color: rgba(255,255,255,.75); }
+    .srv-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,.25); transition: background .4s;
+      position: relative; flex-shrink: 0;
+    }
+    .srv-dot.pinging { background: var(--gold); animation: blink .9s ease-in-out infinite; }
+    .srv-dot.ok      { background: #5DD99A; }
+    .srv-dot.ok::after {
+      content: ''; position: absolute; inset: -3px; border-radius: 50%;
+      border: 1.5px solid #5DD99A; opacity: 0;
+      animation: pulse-ring 2.4s ease-out infinite;
+    }
+    .srv-dot.err { background: #FF7070; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+    @keyframes pulse-ring {
+      0%  { transform:scale(.6); opacity:.6 }
+      70% { transform:scale(1.7); opacity:0 }
+      100%{ opacity:0 }
+    }
+
+    /* ══ HEADER ══ */
     header {
       width: 100%;
-      background: var(--bark);
-      padding: 1.5rem 2rem 1.8rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(155deg, var(--forest) 0%, var(--forest-mid) 100%);
+      padding: 2rem 2rem 2.8rem;
+      text-align: center; position: relative; overflow: hidden;
     }
     header::after {
-      content: '';
-      position: absolute; bottom: -1px; left: 0; right: 0; height: 24px;
-      background: var(--cream);
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 28px;
+      background: var(--mint-bg);
       clip-path: ellipse(55% 100% at 50% 100%);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg opacity='0.045' fill='%23B56B28'%3E%3Cellipse cx='20' cy='20' rx='4' ry='5'/%3E%3C/g%3E%3C/svg%3E");
     }
-    .header-paws {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      opacity: .06; font-size: 2rem; overflow: hidden;
-      display: flex; flex-wrap: wrap; gap: 2rem; padding: 1rem;
-      pointer-events: none;
+    .hdr-blob1 {
+      position: absolute; top: -50px; right: -50px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: rgba(255,255,255,.04); pointer-events: none;
+    }
+    .hdr-blob2 {
+      position: absolute; bottom: 10px; left: -50px;
+      width: 140px; height: 140px; border-radius: 50%;
+      background: rgba(255,255,255,.03); pointer-events: none;
     }
     header h1 {
-      font-family: 'Pacifico', cursive;
-      color: var(--caramel);
-      font-size: clamp(2rem, 5vw, 2.8rem);
-      letter-spacing: .5px;
-      position: relative;
+      font-family: 'Abril Fatface', serif;
+      color: #fff; font-size: clamp(2.2rem, 6vw, 3.2rem);
+      position: relative; text-shadow: 0 2px 18px rgba(0,0,0,.2);
     }
+    header h1 .gold { color: var(--gold); }
     header p {
-      color: var(--biscuit);
-      font-size: .9rem;
-      margin-top: .4rem;
-      font-weight: 600;
-      letter-spacing: .04em;
-      position: relative;
+      color: rgba(255,255,255,.6); font-size: .87rem; font-weight: 500;
+      margin-top: .5rem; position: relative; letter-spacing: .04em;
     }
-    .paw-icon {
-      display: inline-block;
-      font-size: 1.4rem;
-      margin: 0 .35rem;
-      animation: wobble 3s ease-in-out infinite;
-    }
-    @keyframes wobble {
-      0%,100% { transform: rotate(-8deg); }
-      50%      { transform: rotate(8deg); }
-    }
+    .paw { display: inline-block; animation: sway 3s ease-in-out infinite; }
+    @keyframes sway { 0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)} }
 
-    /* ── Steps bar ───────────────────────────────────────── */
+    /* ══ STEPS ══ */
     .steps-bar {
-      display: flex; align-items: center; gap: 0;
+      display: flex; align-items: center;
       width: 100%; max-width: 560px;
-      margin: 1.6rem auto .2rem;
-      padding: 0 1.25rem;
+      margin: 1.8rem auto .4rem; padding: 0 1.5rem;
     }
     .step-dot {
-      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-      background: var(--warm-white); border: 2.5px solid var(--border);
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      background: var(--white); border: 2.5px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: .72rem; font-weight: 800; color: var(--bark-lt);
+      font-size: .72rem; font-weight: 700; color: var(--ink-lt);
       transition: all .3s;
     }
-    .step-dot.active  { background: var(--caramel); border-color: var(--caramel); color: #fff; transform: scale(1.1); }
-    .step-dot.done    { background: var(--moss); border-color: var(--moss); color: #fff; }
-    .step-dot.done::after { content: '✓'; font-size: .8rem; }
-    .step-dot:not(.done) span { display: block; }
-    .step-dot.done span { display: none; }
-    .step-line {
-      flex: 1; height: 3px; background: var(--border);
-      transition: background .3s;
-    }
-    .step-line.done { background: var(--moss); }
+    .step-dot.active { background: var(--gold); border-color: var(--gold); color: #fff; transform: scale(1.12); box-shadow: 0 0 0 4px rgba(232,168,68,.2); }
+    .step-dot.done   { background: var(--forest-lt); border-color: var(--forest-lt); color: #fff; }
+    .step-dot.done::after { content:'✓'; font-size:.82rem; }
+    .step-dot:not(.done) span { display:block; }
+    .step-dot.done span { display:none; }
+    .step-line { flex:1; height:3px; background:var(--border); border-radius:99px; transition:background .3s; }
+    .step-line.done { background: var(--forest-lt); }
 
-    /* ── Main ────────────────────────────────────────────── */
+    /* ══ MAIN ══ */
     main {
-      width: 100%; max-width: 580px;
-      padding: 1.5rem 1.25rem 5rem;
-      display: flex; flex-direction: column; gap: 1.5rem;
+      width: 100%; max-width: 600px;
+      padding: 1.2rem 1.25rem 5rem;
+      display: flex; flex-direction: column; gap: 1.4rem;
     }
 
-    /* ── Cards ───────────────────────────────────────────── */
+    /* ══ CARDS ══ */
     .card {
-      background: var(--warm-white);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.6rem 1.75rem;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 1.6rem 1.75rem;
       box-shadow: var(--shadow-sm);
       animation: fadeUp .35s ease both;
     }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
     .card.hidden { display: none; }
 
-    .card-label {
-      display: inline-flex; align-items: center; gap: .4rem;
-      font-size: .68rem; font-weight: 800; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--bark-lt);
+    .chip {
+      display: inline-flex; align-items: center; gap: .38rem;
+      font-size: .67rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-lt);
       margin-bottom: 1.2rem;
-      background: var(--biscuit);
-      padding: .3rem .7rem; border-radius: 99px;
+      background: var(--mint-bg); border: 1.5px solid var(--border);
+      padding: .28rem .7rem; border-radius: 99px;
     }
-    .card-label .dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--caramel);
+    .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+    .chip-heading {
+      font-family: 'DM Sans', sans-serif;
+      font-size: inherit; font-weight: inherit; color: inherit;
+      letter-spacing: inherit; text-transform: inherit;
+      line-height: 1;
     }
 
-    /* ── Upload zone ─────────────────────────────────────── */
-    .upload-zone {
-      border: 2.5px dashed var(--border-dk);
+    /* ══ PHOTO TIPS CARD ══ */
+    .tips-card {
+      background: var(--gold-lt);
+      border: 1.5px solid #F0D098;
       border-radius: var(--radius-sm);
-      padding: 2.5rem 1rem 2rem;
-      text-align: center;
-      cursor: pointer;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.1rem;
+    }
+    .tips-card-title {
+      font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--gold-dk);
+      margin-bottom: .65rem;
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .45rem .75rem;
+    }
+    .tip-item {
+      display: flex; align-items: flex-start; gap: .4rem;
+      font-size: .81rem; font-weight: 500; color: var(--ink-mid); line-height: 1.45;
+    }
+    .tip-icon { flex-shrink: 0; font-size: .88rem; margin-top: .05rem; }
+
+    /* ══ PRIVACY NOTICE ══ */
+    .privacy-notice {
+      display: flex; align-items: center; gap: .5rem;
+      background: #EAF6F1; border: 1.5px solid #A8D5C2;
+      border-radius: var(--radius-xs); padding: .55rem .85rem;
+      margin-top: .85rem;
+      font-size: .78rem; font-weight: 600; color: var(--src-kb-text);
+      line-height: 1.4;
+    }
+    .privacy-icon { flex-shrink: 0; font-size: 1rem; }
+
+    /* ══ BREEDS PANEL ══ */
+    .breeds-panel {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      animation: fadeUp .35s ease .1s both;
+    }
+    .breeds-panel-head {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+      padding: 1.1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .breeds-panel-title {
+      font-family: 'Abril Fatface', serif;
+      color: #fff; font-size: 1.1rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .bp-count {
+      background: var(--gold); color: var(--forest);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .7rem; font-weight: 700;
+      padding: .15rem .55rem; border-radius: 99px;
+    }
+    .breeds-chevron { color: rgba(255,255,255,.6); font-size: .95rem; transition: transform .25s; }
+    .breeds-panel.open .breeds-chevron { transform: rotate(180deg); }
+
+    .breeds-panel-body { display: none; }
+    .breeds-panel.open .breeds-panel-body { display: flex; flex-direction: column; }
+
+    .breeds-search-wrap {
+      padding: .9rem 1.25rem .65rem;
+      background: var(--mint-lt); border-bottom: 1.5px solid var(--border);
+    }
+    .breeds-search {
+      width: 100%; padding: .65rem 1rem .65rem 2.3rem;
+      border: 2px solid var(--border); border-radius: var(--radius-xs);
+      font-family: 'DM Sans', sans-serif; font-size: .93rem; color: var(--ink);
+      background: var(--white);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237A9E8C' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: .65rem center;
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .breeds-search:focus {
+      border-color: var(--forest-lt);
+      box-shadow: 0 0 0 3px rgba(74,140,104,.13);
+    }
+    .breeds-search::placeholder { color: var(--ink-lt); }
+
+    .breeds-meta {
+      padding: .45rem 1.25rem .35rem;
+      font-size: .71rem; font-weight: 600; color: var(--ink-lt);
+      text-transform: uppercase; letter-spacing: .08em;
+      background: var(--mint-lt); border-bottom: 1.5px solid var(--border);
+    }
+
+    .breeds-grid {
+      padding: .85rem 1.25rem 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: .45rem;
+      max-height: 300px; overflow-y: auto;
+      background: var(--mint-bg);
+    }
+    .breeds-grid::-webkit-scrollbar { width: 5px; }
+    .breeds-grid::-webkit-scrollbar-track { background: var(--mint-mid); border-radius: 99px; }
+    .breeds-grid::-webkit-scrollbar-thumb { background: var(--forest-lt); border-radius: 99px; }
+
+    .breed-chip {
+      padding: .55rem .85rem;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius-xs);
+      font-size: .84rem; font-weight: 600; color: var(--ink-mid);
+      display: flex; align-items: center; gap: .4rem;
+      transition: background .15s, border-color .15s, transform .15s, color .15s;
+      cursor: default; line-height: 1.3;
+    }
+    .breed-chip:hover {
+      background: var(--mint-bg); border-color: var(--forest-lt);
+      color: var(--forest); transform: translateY(-1px);
+    }
+    .breed-chip .bc-paw { font-size: .62rem; opacity: .5; flex-shrink: 0; }
+    .breed-chip.hidden { display: none; }
+
+    .breeds-empty {
+      padding: 2rem 1.25rem; text-align: center;
+      color: var(--ink-lt); font-size: .88rem; font-weight: 600;
+      background: var(--mint-bg); display: none;
+    }
+    .breeds-loading {
+      padding: 1.5rem; text-align: center;
+      color: var(--ink-lt); font-size: .87rem; font-weight: 500;
+    }
+
+    /* ══ UPLOAD ══ */
+    .upload-zone {
+      border: 2.5px dashed var(--border-dk); border-radius: var(--radius-sm);
+      text-align: center; cursor: pointer;
       transition: border-color .2s, background .2s, transform .2s;
-      background: var(--cream);
+      background: var(--mint-bg);
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
     }
     .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--caramel);
-      background: var(--caramel-lt);
-      transform: scale(1.01);
+      border-color: var(--forest-lt); background: var(--mint-lt); transform: scale(1.01);
+    }
+    .upload-zone.has-image:hover { transform: none; }
+    .upload-zone.has-image {
+      background: #000;
+      border-style: solid;
+      border-color: var(--border-dk);
+      min-height: unset;
     }
     .upload-zone input { display: none; }
-    .upload-zone .dog-icon {
-      font-size: 3.5rem; line-height: 1;
-      margin-bottom: .6rem; display: block;
+
+    #upload-prompt {
+      padding: 2.4rem 1rem 2rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .dog-icon {
+      font-size: 3.2rem; line-height: 1; margin-bottom: .6rem; display: block;
       animation: sniff 2.5s ease-in-out infinite;
     }
-    @keyframes sniff {
-      0%,100% { transform: translateY(0); }
-      40%     { transform: translateY(-6px); }
-      60%     { transform: translateY(-3px); }
+    @keyframes sniff { 0%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}60%{transform:translateY(-3px)} }
+    .upload-text { color: var(--ink-mid); font-size: .92rem; font-weight: 500; }
+    .upload-text strong { color: var(--forest-lt); font-weight: 700; }
+    .upload-formats {
+      margin-top: .45rem;
+      font-size: .73rem; font-weight: 600; color: var(--ink-lt);
+      letter-spacing: .05em;
     }
-    .upload-zone .upload-text { color: var(--bark-mid); font-size: .95rem; font-weight: 600; }
-    .upload-zone strong { color: var(--caramel); }
 
-    /* ── Preview ─────────────────────────────────────────── */
     #preview-wrap {
-      position: relative; text-align: center; margin-top: 1.1rem;
       display: none;
+      width: 100%;
+      position: relative;
+      line-height: 0;
     }
     #preview-wrap img {
-      width: 100%; height: auto;
-      max-height: 480px;
-      object-fit: contain;
-      border-radius: var(--radius-sm);
-      display: block;
-      background: var(--biscuit);
+      width: 100%; height: auto; max-height: 460px; object-fit: contain;
+      border-radius: calc(var(--radius-sm) - 2px); display: block;
     }
+    #preview-wrap .replace-hint {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(15,33,25,.6));
+      color: rgba(255,255,255,.8); font-size: .76rem; font-weight: 600;
+      letter-spacing: .05em; text-align: center;
+      padding: 1.6rem .5rem .6rem;
+      border-radius: 0 0 calc(var(--radius-sm) - 2px) calc(var(--radius-sm) - 2px);
+      opacity: 0; transition: opacity .2s;
+      pointer-events: none;
+    }
+    .upload-zone.has-image:hover #preview-wrap .replace-hint { opacity: 1; }
+
     .clear-btn {
       position: absolute; top: 8px; right: 8px;
-      background: rgba(59,37,18,.7); color: #fff;
+      background: rgba(15,33,25,.7); color: #fff;
       border: none; border-radius: 50%; width: 30px; height: 30px;
-      font-size: .95rem; cursor: pointer;
+      font-size: .9rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: background .2s;
+      z-index: 2;
     }
-    .clear-btn:hover { background: var(--bark); }
+    .clear-btn:hover { background: var(--ink); }
 
-    /* ── Primary button ──────────────────────────────────── */
+    /* ══ BUTTONS ══ */
     .btn {
       width: 100%; padding: .9rem 1rem;
-      background: var(--caramel);
-      color: #fff;
+      background: var(--forest); color: #fff;
       border: none; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif;
-      font-size: 1rem; font-weight: 800;
+      font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700;
       cursor: pointer; margin-top: 1.1rem;
       transition: background .2s, transform .15s, box-shadow .2s;
-      box-shadow: 0 4px 0 var(--caramel-dk);
-      letter-spacing: .02em;
+      box-shadow: 0 4px 0 var(--forest-mid);
     }
-    .btn:hover:not(:disabled) {
-      background: var(--caramel-dk);
-      box-shadow: 0 2px 0 var(--caramel-dk);
-      transform: translateY(2px);
-    }
+    .btn:hover:not(:disabled) { background: var(--forest-mid); box-shadow: 0 2px 0 var(--forest-mid); transform: translateY(2px); }
     .btn:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
-    .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+    .btn.gold { background: var(--gold); box-shadow: 0 4px 0 var(--gold-dk); color: var(--forest); }
+    .btn.gold:hover:not(:disabled) { background: var(--gold-dk); box-shadow: 0 2px 0 var(--gold-dk); color: #fff; transform: translateY(2px); }
 
-    /* ── Spinner ─────────────────────────────────────────── */
     .spinner {
-      display: inline-block; width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      vertical-align: middle; margin-right: 8px;
+      display: inline-block; width: 17px; height: 17px;
+      border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 7px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin { to{transform:rotate(360deg)} }
 
-    /* ── Predictions ─────────────────────────────────────── */
-    .pred-list { display: flex; flex-direction: column; gap: .75rem; }
+    /* ══ PREDICTIONS ══ */
+    .pred-list { display: flex; flex-direction: column; gap: .7rem; }
     .pred-item {
-      display: flex; align-items: center; gap: .9rem;
-      padding: .95rem 1.1rem;
-      border: 2px solid var(--border);
+      display: flex; align-items: center; gap: .85rem;
+      padding: .9rem 1.1rem; border: 2px solid var(--border);
       border-radius: var(--radius-sm); cursor: pointer;
       transition: border-color .2s, background .2s, transform .2s;
-      background: var(--cream);
+      background: var(--mint-bg);
     }
-    .pred-item:hover   { border-color: var(--caramel); background: var(--caramel-lt); transform: translateX(3px); }
-    .pred-item.selected{ border-color: var(--caramel); background: var(--caramel-lt); transform: translateX(3px); }
+    .pred-item:hover    { border-color: var(--forest-lt); background: var(--mint-lt); transform: translateX(3px); }
+    .pred-item.selected { border-color: var(--gold); background: var(--gold-lt); transform: translateX(3px); }
     .pred-item input[type=radio] { display: none; }
     .pred-rank {
       min-width: 30px; height: 30px; border-radius: 50%;
-      background: var(--biscuit); border: 2px solid var(--border);
+      background: var(--mint-mid); border: 2px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: .75rem; font-weight: 800; color: var(--bark-lt);
-      transition: all .2s;
+      font-size: .75rem; font-weight: 700; color: var(--ink-lt); transition: all .2s;
     }
-    .pred-item.selected .pred-rank { background: var(--caramel); border-color: var(--caramel); color: #fff; }
-    .pred-name { flex: 1; font-weight: 700; font-size: 1rem; color: var(--bark); }
-    .pred-pct  { font-size: .85rem; font-weight: 800; color: var(--caramel); }
-    .pred-bar-wrap {
-      width: 100%; height: 5px; background: var(--border);
-      border-radius: 99px; margin-top: 5px; overflow: hidden;
-    }
-    .pred-bar { height: 100%; background: linear-gradient(90deg, var(--caramel), var(--caramel-dk)); border-radius: 99px; }
+    .pred-item.selected .pred-rank { background: var(--gold); border-color: var(--gold); color: #fff; }
+    .pred-name { flex: 1; font-weight: 700; font-size: .97rem; color: var(--ink); }
+    .pred-pct  { font-size: .85rem; font-weight: 700; color: var(--forest-lt); }
+    .pred-bar-wrap { width: 100%; height: 4px; background: var(--border); border-radius: 99px; margin-top: 5px; overflow: hidden; }
+    .pred-bar { height: 100%; background: linear-gradient(90deg, var(--forest-lt), var(--forest)); border-radius: 99px; }
     .pred-label-wrap { flex: 1; }
+    .pred-item.selected .pred-bar { background: linear-gradient(90deg, var(--gold), var(--gold-dk)); }
 
-    /* ── Question area ───────────────────────────────────── */
+    /* ══ ASK CARD ══ */
     .breed-hero {
-      background: linear-gradient(135deg, var(--bark) 0%, var(--bark-mid) 100%);
-      border-radius: var(--radius-sm);
-      padding: 1rem 1.2rem;
-      display: flex; align-items: center; gap: .75rem;
-      margin-bottom: 1.1rem;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+      border-radius: var(--radius-sm); padding: 1rem 1.2rem;
+      display: flex; align-items: center; gap: .75rem; margin-bottom: 1.1rem;
     }
-    .breed-hero-icon { font-size: 2rem; }
-    .breed-hero h3 {
-      font-family: 'Pacifico', cursive;
-      color: var(--caramel);
-      font-size: 1.25rem;
-    }
-    .breed-hero p { color: var(--biscuit); font-size: .8rem; font-weight: 600; margin-top: 2px; }
+    .breed-hero-icon { font-size: 1.9rem; }
+    .breed-hero h2 { font-family: 'Abril Fatface', serif; color: var(--gold); font-size: 1.2rem; }
+    .breed-hero p { color: rgba(255,255,255,.55); font-size: .78rem; font-weight: 500; margin-top: 2px; }
     textarea {
-      width: 100%; min-height: 90px;
-      padding: .9rem 1rem; border: 2px solid var(--border);
-      border-radius: var(--radius-sm); font-size: .97rem; resize: vertical;
-      font-family: 'Nunito', sans-serif; color: var(--bark); background: var(--cream);
-      transition: border-color .2s, background .2s;
-      outline: none;
+      width: 100%; min-height: 90px; padding: .9rem 1rem;
+      border: 2px solid var(--border); border-radius: var(--radius-sm);
+      font-size: .95rem; resize: vertical;
+      font-family: 'DM Sans', sans-serif; color: var(--ink); background: var(--mint-bg);
+      transition: border-color .2s, background .2s, box-shadow .2s; outline: none;
     }
-    textarea:focus { border-color: var(--caramel); background: var(--warm-white); }
-    textarea::placeholder { color: var(--bark-lt); }
+    textarea:focus { border-color: var(--forest-lt); background: var(--white); box-shadow: 0 0 0 3px rgba(74,140,104,.12); }
+    textarea::placeholder { color: var(--ink-lt); }
 
-    /* ── Answer ──────────────────────────────────────────── */
+    /* ══ ANSWER ══ */
     .answer-bubble {
-      background: var(--cream);
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 1.2rem 1.3rem;
-      font-size: .97rem; line-height: 1.7;
-      color: var(--bark);
-      position: relative;
+      background: var(--mint-lt); border: 2px solid var(--mint-mid);
+      border-radius: var(--radius-sm); padding: 1.3rem 1.4rem;
+      font-size: .97rem; line-height: 1.75; color: var(--ink); position: relative;
     }
-    .answer-bubble::before {
-      content: '🐾';
-      position: absolute; top: -16px; left: 16px;
-      font-size: 1.5rem;
+    .answer-bubble::before { content:'🐾'; position:absolute; top:-15px; left:16px; font-size:1.4rem; }
+
+    .source-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      margin-top: .85rem; padding: .3rem .75rem;
+      border-radius: 99px; font-size: .7rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      border: 1.5px solid transparent;
     }
-    .answer-actions { display: flex; gap: .75rem; margin-top: 1rem; }
+    .source-badge.hidden { display: none; }
+    .source-badge .src-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; position:relative; }
+    .source-badge .src-dot::after {
+      content:''; position:absolute; inset:-3px; border-radius:50%;
+      border:1.5px solid currentColor; opacity:0;
+      animation: pulse-ring 2.4s ease-out infinite;
+    }
+    .source-badge.source-vector  { background:var(--src-kb-bg);  border-color:var(--src-kb-border);  color:var(--src-kb-text); }
+    .source-badge.source-vector  .src-dot { background:var(--src-kb-text);  color:var(--src-kb-text); }
+    .source-badge.source-tavily  { background:var(--src-web-bg); border-color:var(--src-web-border); color:var(--src-web-text); }
+    .source-badge.source-tavily  .src-dot { background:var(--src-web-text); color:var(--src-web-text); }
+    .source-badge.source-blocked { background:var(--src-blk-bg); border-color:var(--src-blk-border); color:var(--src-blk-text); }
+    .source-badge.source-blocked .src-dot { background:var(--src-blk-text); color:var(--src-blk-text); }
+
+    .answer-actions { display:flex; gap:.75rem; margin-top:1.1rem; }
     .btn-ghost {
-      flex: 1; padding: .65rem;
-      background: transparent; border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif;
-      font-size: .85rem; font-weight: 700;
-      cursor: pointer; color: var(--bark-mid);
-      transition: border-color .2s, color .2s, background .2s;
+      flex:1; padding:.65rem;
+      background:transparent; border:2px solid var(--border);
+      border-radius:var(--radius-sm);
+      font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:700;
+      cursor:pointer; color:var(--ink-mid);
+      transition:border-color .2s, color .2s, background .2s;
     }
-    .btn-ghost:hover { border-color: var(--caramel); color: var(--bark); background: var(--caramel-lt); }
+    .btn-ghost:hover { border-color:var(--forest-lt); color:var(--forest); background:var(--mint-bg); }
 
-    /* ── Error ───────────────────────────────────────────── */
+    /* ══ ERRORS ══ */
     .error-msg {
-      background: #FFF1F0; border: 1.5px solid #FFC9C4;
-      color: #B03020; border-radius: var(--radius-sm);
-      padding: .8rem 1rem; font-size: .88rem; margin-top: .75rem;
-      font-weight: 600;
+      background:#FEF2F2; border:1.5px solid #FECACA; color:#991B1B;
+      border-radius:var(--radius-sm); padding:.8rem 1rem;
+      font-size:.86rem; margin-top:.75rem; font-weight:600; line-height:1.5;
+    }
+    .error-hint { display:block; margin-top:.4rem; font-size:.79rem; opacity:.8; }
+
+    /* ══ FOOTER ══ */
+    footer {
+      text-align:center; padding:1.5rem 0 2rem;
+      color:var(--ink-lt); font-size:.76rem; font-weight:500; letter-spacing:.05em;
     }
 
-    /* ── Footer bone divider ─────────────────────────────── */
-    .footer-paws {
-      text-align: center; margin-top: auto;
-      padding: 2rem 0 1rem;
-      color: var(--bark-lt); font-size: .78rem; font-weight: 600;
-      letter-spacing: .04em;
+    /* ══ INTRO BLURB ══ */
+    .intro-blurb {
+      width: 100%; max-width: 600px;
+      padding: .2rem 1.25rem 0;
+      text-align: center;
+    }
+    .intro-blurb p {
+      color: var(--ink-mid); font-size: .91rem; line-height: 1.7; font-weight: 500;
+    }
+    .intro-blurb strong { color: var(--forest); }
+
+    /* ══ FAQ SECTION ══ */
+    .faq-section {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      animation: fadeUp .35s ease .15s both;
+    }
+    .faq-head {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+      padding: 1.1rem 1.5rem;
+    }
+    .faq-head h2 {
+      font-family: 'Abril Fatface', serif;
+      color: #fff; font-size: 1.1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .faq-body { padding: 1.1rem 1.4rem 1.3rem; display: flex; flex-direction: column; gap: .9rem; }
+    .faq-item h3 {
+      font-size: .93rem; font-weight: 700; color: var(--forest);
+      margin-bottom: .3rem;
+    }
+    .faq-item p {
+      font-size: .88rem; line-height: 1.65; color: var(--ink-mid);
+    }
+    .faq-divider {
+      height: 1px; background: var(--border); border: none; margin: 0;
+    }
+
+    /* ══ STATIC BREED INDEX ══ */
+    .breed-index-section {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .breed-index-head {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+      padding: 1.1rem 1.5rem;
+    }
+    .breed-index-head h2 {
+      font-family: 'Abril Fatface', serif;
+      color: #fff; font-size: 1.1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .breed-index-body {
+      padding: 1rem 1.25rem 1.25rem;
+      background: var(--mint-bg);
+    }
+    .breed-index-intro {
+      font-size: .84rem; color: var(--ink-mid); line-height: 1.6;
+      margin-bottom: .85rem;
+    }
+    .breed-index-list {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+      list-style: none; padding: 0; margin: 0;
+    }
+    .breed-index-list li {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius-xs); padding: .3rem .7rem;
+      font-size: .8rem; font-weight: 600; color: var(--ink-mid);
+    }
+
+    /* ══ Accessible visually-hidden utility ══ */
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="header-paws" aria-hidden="true">
-    🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾🐾
+<!-- No-JS fallback -->
+<noscript>
+  <div style="background:#1B3D2F;color:#fff;padding:1.5rem;text-align:center;font-family:sans-serif;">
+    <strong>Sniff &amp; Tell — AI Dog Breed Identifier</strong><br>
+    JavaScript is required to use the breed identification tool. Please enable JavaScript in your browser.<br><br>
+    Sniff &amp; Tell identifies 73 dog breeds including Labrador Retriever, German Shepherd, Golden Retriever,
+    French Bulldog, Corgi (Pembroke Welsh Corgi), Beagle, Poodle, Bulldog, Rottweiler, Yorkshire Terrier,
+    Boxer, Dachshund, Siberian Husky, Great Dane, Doberman Pinscher, Shih Tzu, Border Collie, Pomeranian,
+    Australian Shepherd, Cavalier King Charles Spaniel, and many more.
   </div>
-  <h1><span class="paw-icon">🐾</span> Sniff &amp; Tell <span class="paw-icon">🐾</span></h1>
+</noscript>
+
+<!-- Server warm-up status bar -->
+<div id="status-bar" role="status" aria-label="Server status">
+  <div class="srv-chip">
+    <div class="srv-dot pinging" id="dot-classifier" aria-hidden="true"></div>
+    <span class="srv-label">Classifier&nbsp;</span>
+    <span class="srv-status" id="lbl-classifier">Waking up…</span>
+  </div>
+  <div class="srv-chip">
+    <div class="srv-dot pinging" id="dot-rag" aria-hidden="true"></div>
+    <span class="srv-label">Knowledge&nbsp;</span>
+    <span class="srv-status" id="lbl-rag">Waking up…</span>
+  </div>
+</div>
+
+<header>
+  <div class="hdr-blob1" aria-hidden="true"></div>
+  <div class="hdr-blob2" aria-hidden="true"></div>
+  <h1><span class="paw" aria-hidden="true">🐾</span> Sniff <span class="gold">&amp;</span> Tell <span class="paw" aria-hidden="true">🐾</span></h1>
   <p>Upload a photo · discover the breed · ask anything</p>
 </header>
 
-<!-- Step indicators -->
-<div class="steps-bar" id="steps-bar" role="progressbar" aria-label="Steps">
-  <div class="step-dot active" id="dot-1"><span>1</span></div>
-  <div class="step-line" id="line-1"></div>
-  <div class="step-dot" id="dot-2"><span>2</span></div>
-  <div class="step-line" id="line-2"></div>
-  <div class="step-dot" id="dot-3"><span>3</span></div>
-  <div class="step-line" id="line-3"></div>
-  <div class="step-dot" id="dot-4"><span>4</span></div>
+<div class="intro-blurb" role="doc-subtitle">
+  <p>
+    <strong>Sniff &amp; Tell</strong> uses advanced AI to analyse your dog's photo and identify the breed from <strong>73 recognised breeds</strong> — instantly and for free.
+    Upload any clear photo, get the top matches with confidence scores, then ask our AI knowledge base anything about temperament, exercise needs, grooming, diet, or health.
+  </p>
 </div>
+
+<!-- Step indicator -->
+<nav class="steps-bar" aria-label="Progress steps">
+  <div class="step-dot active" id="dot-1" aria-label="Step 1: Upload photo"><span aria-hidden="true">1</span></div>
+  <div class="step-line" id="line-1" aria-hidden="true"></div>
+  <div class="step-dot" id="dot-2" aria-label="Step 2: Pick breed"><span aria-hidden="true">2</span></div>
+  <div class="step-line" id="line-2" aria-hidden="true"></div>
+  <div class="step-dot" id="dot-3" aria-label="Step 3: Ask a question"><span aria-hidden="true">3</span></div>
+  <div class="step-line" id="line-3" aria-hidden="true"></div>
+  <div class="step-dot" id="dot-4" aria-label="Step 4: Get answer"><span aria-hidden="true">4</span></div>
+</nav>
 
 <main>
 
+  <!-- Breeds panel — always visible, collapsible -->
+  <section class="breeds-panel" id="breeds-panel" aria-label="Available dog breeds">
+    <div class="breeds-panel-head" id="breeds-toggle" role="button" tabindex="0"
+         aria-expanded="false" aria-controls="breeds-panel-body">
+      <div class="breeds-panel-title">
+        🐕 Available Breeds
+        <span class="bp-count" id="bp-count">–</span>
+      </div>
+      <span class="breeds-chevron" aria-hidden="true">▼</span>
+    </div>
+    <div class="breeds-panel-body" id="breeds-panel-body">
+      <div class="breeds-search-wrap">
+        <input class="breeds-search" id="breed-search" type="search"
+               placeholder="Search breeds…" autocomplete="off"
+               aria-label="Search dog breeds" />
+      </div>
+      <div class="breeds-meta" id="breeds-meta" aria-live="polite">Loading…</div>
+      <div class="breeds-grid" id="breeds-grid" role="list">
+        <div class="breeds-loading" id="breeds-loading">Loading breeds…</div>
+      </div>
+      <div class="breeds-empty" id="breeds-empty" role="status">
+        🔍 No breeds match "<span id="empty-query"></span>"
+      </div>
+    </div>
+  </section>
+
   <!-- Step 1 — Upload -->
-  <div class="card" id="card-upload">
-    <div class="card-label"><div class="dot"></div> Upload a photo</div>
+  <section class="card" id="card-upload" aria-label="Upload your dog's photo">
+    <div class="chip"><div class="dot" aria-hidden="true"></div> <h2 class="chip-heading">Upload a photo</h2></div>
 
-    <div class="upload-zone" id="drop-zone">
-      <input type="file" id="file-input" accept="image/*" />
-      <span class="dog-icon" aria-hidden="true">🐶</span>
-      <p class="upload-text">Drop your dog's photo here,<br>or <strong>tap to browse</strong></p>
+    <!-- Photo tips -->
+    <div class="tips-card" role="note" aria-label="Photo tips for best results">
+      <div class="tips-card-title">
+        <span aria-hidden="true">💡</span> Tips for best results
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item"><span class="tip-icon" aria-hidden="true">☀️</span> Good lighting — avoid dark or shadowy shots</div>
+        <div class="tip-item"><span class="tip-icon" aria-hidden="true">🎯</span> One dog per photo, centred in the frame</div>
+        <div class="tip-item"><span class="tip-icon" aria-hidden="true">📐</span> Full body or clear head-and-shoulders view</div>
+        <div class="tip-item"><span class="tip-icon" aria-hidden="true">🔍</span> Sharp focus — blurry or distant photos reduce accuracy</div>
+      </div>
     </div>
 
-    <div id="preview-wrap">
-      <img id="preview-img" src="" alt="Your dog" />
-      <button class="clear-btn" id="clear-btn" title="Remove image" aria-label="Remove image">✕</button>
+    <div class="upload-zone" id="drop-zone"
+         role="button" tabindex="0"
+         aria-label="Drop your dog photo here or click to browse">
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Choose dog photo" />
+
+      <div id="upload-prompt">
+        <span class="dog-icon" aria-hidden="true">🐶</span>
+        <p class="upload-text">Drop your dog's photo here,<br>or <strong>tap to browse</strong></p>
+        <p class="upload-formats">JPG · PNG · WebP · GIF &nbsp;·&nbsp; Max 10 MB</p>
+      </div>
+
+      <div id="preview-wrap">
+        <img id="preview-img" src="" alt="Your uploaded dog photo" loading="lazy" />
+        <div class="replace-hint">Tap to replace photo</div>
+        <button class="clear-btn" id="clear-btn" aria-label="Remove image" type="button">✕</button>
+      </div>
     </div>
 
-    <div id="upload-error"></div>
-    <button class="btn" id="classify-btn" disabled>🔍 Identify Breed</button>
-  </div>
+    <!-- Privacy notice -->
+    <div class="privacy-notice" role="note" aria-label="Privacy information">
+      <span class="privacy-icon" aria-hidden="true">🔒</span>
+      <span>Your photo is sent only to our breed classifier and <strong>deleted immediately</strong> after the prediction. We never store or use your images for any other purpose.</span>
+    </div>
+
+    <div id="upload-error" role="alert"></div>
+    <button class="btn gold" id="classify-btn" disabled>🔍 Identify Breed</button>
+  </section>
 
   <!-- Step 2 — Predictions -->
-  <div class="card hidden" id="card-results">
-    <div class="card-label"><div class="dot"></div> Which breed is this?</div>
-    <div class="pred-list" id="pred-list"></div>
-    <div id="results-error"></div>
+  <section class="card hidden" id="card-results" aria-label="Breed identification results">
+    <div class="chip"><div class="dot" aria-hidden="true"></div> <h2 class="chip-heading">Which breed is this?</h2></div>
+    <div class="pred-list" id="pred-list" role="radiogroup" aria-label="Breed predictions"></div>
+    <div id="results-error" role="alert"></div>
     <button class="btn" id="select-btn" disabled>Ask a Question 🐾</button>
-  </div>
+  </section>
 
   <!-- Step 3 — Ask -->
-  <div class="card hidden" id="card-ask">
-    <div class="card-label"><div class="dot"></div> Ask anything</div>
+  <section class="card hidden" id="card-ask" aria-label="Ask about this breed">
+    <div class="chip"><div class="dot" aria-hidden="true"></div> <h2 class="chip-heading">Ask anything</h2></div>
     <div class="breed-hero">
       <div class="breed-hero-icon" aria-hidden="true">🦴</div>
       <div>
-        <h3 id="qa-breed-name"></h3>
+        <h2 id="qa-breed-name"></h2>
         <p>What would you like to know?</p>
       </div>
     </div>
-    <textarea id="question-input" placeholder="e.g. How much exercise does this breed need?"></textarea>
-    <div id="ask-error"></div>
-    <button class="btn" id="ask-btn" disabled>Ask! 🐾</button>
-  </div>
+    <label for="question-input" class="visually-hidden">Your question</label>
+    <textarea id="question-input"
+              placeholder="e.g. How much exercise does this breed need?"
+              aria-label="Type your question about this breed"
+              maxlength="500"></textarea>
+    <div id="ask-error" role="alert"></div>
+    <button class="btn gold" id="ask-btn" disabled>Ask! 🐾</button>
+  </section>
 
   <!-- Step 4 — Answer -->
-  <div class="card hidden" id="card-answer">
-    <div class="card-label"><div class="dot"></div> Here's the scoop</div>
-    <div class="answer-bubble" id="answer-text"></div>
+  <section class="card hidden" id="card-answer" aria-label="Breed information answer">
+    <div class="chip"><div class="dot" aria-hidden="true"></div> <h2 class="chip-heading">Here's the scoop</h2></div>
+    <div class="answer-bubble" id="answer-text" aria-live="polite"></div>
+    <div class="source-badge hidden" id="source-badge" role="status" aria-live="polite">
+      <span class="src-dot" id="source-dot" aria-hidden="true"></span>
+      <span id="source-label"></span>
+    </div>
     <div class="answer-actions">
       <button class="btn-ghost" id="ask-another-btn">Ask another</button>
       <button class="btn-ghost" id="start-over-btn">Start over</button>
     </div>
-  </div>
+  </section>
+
+  <!-- FAQ — mirrors JSON-LD for on-page SEO content -->
+  <section class="faq-section" aria-label="Frequently asked questions about dog breed identification">
+    <div class="faq-head">
+      <h2>🦴 Common Questions</h2>
+    </div>
+    <div class="faq-body">
+      <div class="faq-item">
+        <h3>How do I identify my dog's breed?</h3>
+        <p>Simply upload a clear photo of your dog. Our AI model analyses the image and returns the top 3 most likely breeds with confidence scores — no account or sign-up needed.</p>
+      </div>
+      <hr class="faq-divider" />
+      <div class="faq-item">
+        <h3>What dog breeds can Sniff &amp; Tell identify?</h3>
+        <p>Sniff &amp; Tell recognises 73 dog breeds, including popular ones like Labrador Retriever, German Shepherd, Corgi, French Bulldog, Golden Retriever, and many more. Use the breed browser above to see the full list.</p>
+      </div>
+      <hr class="faq-divider" />
+      <div class="faq-item">
+        <h3>Can I ask questions about a dog breed after identification?</h3>
+        <p>Yes! After identifying the breed, ask anything — exercise requirements, temperament, grooming needs, diet tips, health concerns, and more. Our AI knowledge base provides detailed, helpful answers sourced from expert breed data and live web search.</p>
+      </div>
+      <hr class="faq-divider" />
+      <div class="faq-item">
+        <h3>Is Sniff &amp; Tell free to use?</h3>
+        <p>Completely free — no account, sign-up, or credit card required. Upload a photo and get instant AI-powered breed identification at no cost.</p>
+      </div>
+      <hr class="faq-divider" />
+      <div class="faq-item">
+        <h3>How accurate is the dog breed identifier?</h3>
+        <p>Sniff &amp; Tell uses a deep learning model trained on 73 breeds and returns the top 3 most likely matches with confidence scores. For best results use a clear, well-lit photo of your dog facing the camera.</p>
+      </div>
+      <hr class="faq-divider" />
+      <div class="faq-item">
+        <h3>Does Sniff &amp; Tell store or save my photos?</h3>
+        <p>No. Your photo is transmitted directly to the breed classifier and discarded immediately after the prediction result is returned. We never store, retain, or use your images for any other purpose.</p>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ══ STATIC BREED INDEX ══
+    Rendered in plain HTML so search engines can crawl every breed name.
+  -->
+  <section class="breed-index-section" aria-label="Full list of identifiable dog breeds">
+    <div class="breed-index-head">
+      <h2>🐕 All 73 Identifiable Dog Breeds</h2>
+    </div>
+    <div class="breed-index-body">
+      <p class="breed-index-intro">
+        Sniff &amp; Tell can identify the following 73 dog breeds from a photo.
+        Upload your dog's picture above to find out which breed — or mix of breeds — your dog most resembles.
+      </p>
+      <ul class="breed-index-list" id="static-breed-list">
+        <li>Affenpinscher</li><li>Afghan Hound</li><li>African Hunting Dog</li>
+        <li>Airedale Terrier</li><li>American Staffordshire Terrier</li>
+        <li>Appenzeller Sennenhund</li><li>Australian Terrier</li><li>Basenji</li>
+        <li>Basset Hound</li><li>Beagle</li><li>Bedlington Terrier</li>
+        <li>Bernese Mountain Dog</li><li>Black-and-Tan Coonhound</li>
+        <li>Blenheim Spaniel</li><li>Bloodhound</li><li>Bluetick Coonhound</li>
+        <li>Border Collie</li><li>Border Terrier</li><li>Borzoi</li>
+        <li>Boston Bull Terrier</li><li>Bouvier des Flandres</li><li>Boxer</li>
+        <li>Brabancon Griffon</li><li>Briard</li><li>Brittany Spaniel</li>
+        <li>Bull Mastiff</li><li>Cairn Terrier</li><li>Cardigan Welsh Corgi</li>
+        <li>Chesapeake Bay Retriever</li><li>Chihuahua</li><li>Chow Chow</li>
+        <li>Clumber Spaniel</li><li>Cocker Spaniel</li><li>Collie</li>
+        <li>Curly-Coated Retriever</li><li>Dandie Dinmont Terrier</li><li>Dhole</li>
+        <li>Dingo</li><li>Doberman Pinscher</li><li>English Foxhound</li>
+        <li>English Setter</li><li>English Springer Spaniel</li>
+        <li>Entlebucher Sennenhund</li><li>Eskimo Dog</li>
+        <li>Flat-Coated Retriever</li><li>French Bulldog</li><li>German Shepherd</li>
+        <li>German Short-Haired Pointer</li><li>Giant Schnauzer</li>
+        <li>Golden Retriever</li><li>Gordon Setter</li><li>Great Dane</li>
+        <li>Great Pyrenees</li><li>Greater Swiss Mountain Dog</li><li>Ibizan Hound</li>
+        <li>Irish Setter</li><li>Irish Terrier</li><li>Irish Water Spaniel</li>
+        <li>Irish Wolfhound</li><li>Italian Greyhound</li><li>Japanese Spaniel</li>
+        <li>Keeshond</li><li>Kelpie</li><li>Kerry Blue Terrier</li><li>Komondor</li>
+        <li>Kuvasz</li><li>Labrador Retriever</li><li>Lakeland Terrier</li>
+        <li>Leonberg</li><li>Lhasa Apso</li><li>Malamute</li><li>Malinois</li>
+        <li>Maltese</li><li>Mexican Hairless (Xoloitzcuintli)</li>
+        <li>Miniature Pinscher</li><li>Miniature Poodle</li><li>Miniature Schnauzer</li>
+        <li>Norfolk Terrier</li><li>Norwegian Elkhound</li><li>Norwich Terrier</li>
+        <li>Old English Sheepdog</li><li>Otterhound</li><li>Papillon</li>
+        <li>Pembroke Welsh Corgi</li><li>Pomeranian</li><li>Pug</li>
+        <li>Redbone Coonhound</li><li>Rhodesian Ridgeback</li><li>Rottweiler</li>
+        <li>Saint Bernard</li><li>Saluki</li><li>Samoyed</li><li>Scotch Terrier</li>
+        <li>Scottish Deerhound</li><li>Sealyham Terrier</li><li>Shetland Sheepdog</li>
+        <li>Shih Tzu</li><li>Siberian Husky</li><li>Silky Terrier</li>
+        <li>Soft-Coated Wheaten Terrier</li><li>Staffordshire Bull Terrier</li>
+        <li>Standard Poodle</li><li>Standard Schnauzer</li><li>Sussex Spaniel</li>
+        <li>Tibetan Mastiff</li><li>Tibetan Terrier</li><li>Toy Poodle</li>
+        <li>Toy Terrier</li><li>Vizsla</li><li>Walker Hound</li><li>Weimaraner</li>
+        <li>Welsh Springer Spaniel</li><li>West Highland White Terrier</li>
+        <li>Whippet</li><li>Wire Fox Terrier</li><li>Wire-Haired Fox Terrier</li>
+        <li>Yorkshire Terrier</li>
+      </ul>
+    </div>
+  </section>
 
 </main>
 
-<div class="footer-paws">🐾 &nbsp; made with love for dog lovers &nbsp; 🐾</div>
+<footer>
+  <p>🐾 &nbsp; made with love for dog lovers &nbsp; 🐾</p>
+</footer>
 
 <script>
-  const CLASSIFIER_URL = "https://dog-image-classifier.onrender.com";
-  const RAG_URL        = "https://your-rag.koyeb.app";
+  // ── CONFIG ────────────────────────────────────────────────
+  // SECURITY: Keep API origins as constants — never build URLs from user input.
+  const CLASSIFIER_ORIGIN = "https://chrismontes-dog-image-classifier-backend.hf.space";
+  const RAG_ORIGIN        = "https://chrismontes-dog-rag-backend.hf.space";
+  const RAG_TIMEOUT_MS    = 35_000;
 
+  // SECURITY: Enforce strict file upload limits.
+  const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+  const MAX_FILE_BYTES     = 10 * 1024 * 1024; // 10 MB
+
+  // SECURITY: Enforce question length limits to prevent oversized payloads.
+  const MAX_QUESTION_LENGTH = 500;
+
+  // SECURITY: Simple client-side rate limiter — prevents accidental/bot request floods.
+  const rateLimiter = (() => {
+    const windows = {};
+    return {
+      // Returns true if the action is allowed; false if rate-limited.
+      check(key, maxCalls, windowMs) {
+        const now  = Date.now();
+        const hits = (windows[key] || []).filter(t => now - t < windowMs);
+        if (hits.length >= maxCalls) return false;
+        windows[key] = [...hits, now];
+        return true;
+      }
+    };
+  })();
+
+  // SECURITY: Sanitise any string before inserting as text content.
+  // Uses the browser's own text node encoding — no custom regex needed.
+  function sanitiseText(str) {
+    if (typeof str !== "string") return "";
+    const el = document.createElement("span");
+    el.textContent = str;
+    return el.textContent; // round-trip through textContent strips all markup
+  }
+
+  // SECURITY: Validate that a response object has the expected shape
+  // before touching any of its fields.
+  function validatePredictions(data) {
+    if (!data || !Array.isArray(data.predictions)) return false;
+    if (data.predictions.length === 0 || data.predictions.length > 10) return false;
+    return data.predictions.every(p =>
+      typeof p.display_name === "string" && p.display_name.length <= 120 &&
+      typeof p.breed        === "string" && p.breed.length        <= 120 &&
+      typeof p.probability  === "number" && p.probability >= 0 && p.probability <= 1
+    );
+  }
+
+  function validateAskResponse(data) {
+    return (
+      data &&
+      typeof data.response === "string" && data.response.length > 0 && data.response.length <= 8000 &&
+      (data.source === undefined || typeof data.source === "string")
+    );
+  }
+
+  // ── SERVER WARM-UP PINGS ──────────────────────────────────
+  // SECURITY: Use no-cors + credentials:omit — prevents credential leakage,
+  // and the ping is only for UX (server warm-up), not for reading data.
+  async function pingServer(url, dotId, labelId) {
+    const dot   = document.getElementById(dotId);
+    const label = document.getElementById(labelId);
+    try {
+      await fetch(url, { method: "GET", mode: "no-cors", credentials: "omit" });
+      dot.className     = "srv-dot ok";
+      label.textContent = "Ready ✓";
+    } catch {
+      dot.className     = "srv-dot err";
+      label.textContent = "Unreachable";
+    }
+  }
+
+  pingServer(`${CLASSIFIER_ORIGIN}/`, "dot-classifier", "lbl-classifier");
+  pingServer(`${RAG_ORIGIN}/`,        "dot-rag",        "lbl-rag");
+
+  // ── DOM REFS ──────────────────────────────────────────────
   const dropZone      = document.getElementById("drop-zone");
   const fileInput     = document.getElementById("file-input");
+  const uploadPrompt  = document.getElementById("upload-prompt");
   const previewWrap   = document.getElementById("preview-wrap");
   const previewImg    = document.getElementById("preview-img");
   const clearBtn      = document.getElementById("clear-btn");
@@ -425,7 +1135,6 @@
   const cardResults   = document.getElementById("card-results");
   const predList      = document.getElementById("pred-list");
   const selectBtn     = document.getElementById("select-btn");
-  const resultsError  = document.getElementById("results-error");
   const cardAsk       = document.getElementById("card-ask");
   const qaBreedName   = document.getElementById("qa-breed-name");
   const questionInput = document.getElementById("question-input");
@@ -433,24 +1142,137 @@
   const askError      = document.getElementById("ask-error");
   const cardAnswer    = document.getElementById("card-answer");
   const answerText    = document.getElementById("answer-text");
+  const sourceBadge   = document.getElementById("source-badge");
+  const sourceLabel   = document.getElementById("source-label");
   const askAnotherBtn = document.getElementById("ask-another-btn");
   const startOverBtn  = document.getElementById("start-over-btn");
+  const breedsPanel   = document.getElementById("breeds-panel");
+  const breedsToggle  = document.getElementById("breeds-toggle");
+  const breedSearch   = document.getElementById("breed-search");
+  const breedsGrid    = document.getElementById("breeds-grid");
+  const breedsLoading = document.getElementById("breeds-loading");
+  const breedsEmpty   = document.getElementById("breeds-empty");
+  const breedsMeta    = document.getElementById("breeds-meta");
+  const bpCount       = document.getElementById("bp-count");
+  const emptyQuery    = document.getElementById("empty-query");
 
   let selectedFile  = null;
   let selectedBreed = null;
+  let allBreeds     = [];
+  let breedsLoaded  = false;
+  // Track active object URL so we can revoke it and avoid memory leaks.
+  let currentPreviewURL = null;
 
+  // ── STEP INDICATOR ────────────────────────────────────────
   function setStep(n) {
     for (let i = 1; i <= 4; i++) {
       const dot  = document.getElementById(`dot-${i}`);
       const line = document.getElementById(`line-${i}`);
       dot.classList.remove("active","done");
-      if (i < n)       dot.classList.add("done");
+      if (i < n)        dot.classList.add("done");
       else if (i === n) dot.classList.add("active");
       if (line) line.classList.toggle("done", i < n);
     }
   }
 
-  dropZone.addEventListener("click", () => fileInput.click());
+  // ── BREEDS PANEL ──────────────────────────────────────────
+  breedsToggle.addEventListener("click", async () => {
+    const isOpen = breedsPanel.classList.toggle("open");
+    breedsToggle.setAttribute("aria-expanded", isOpen);
+    if (isOpen && !breedsLoaded) await loadBreedList();
+  });
+  breedsToggle.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); breedsToggle.click(); }
+  });
+
+  async function loadBreedList() {
+    try {
+      const cached = localStorage.getItem("sniff_tell_breeds");
+      if (cached) {
+        // SECURITY: Validate cached data before using it.
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.every(b => typeof b === "string" && b.length <= 120)) {
+          allBreeds    = parsed;
+          breedsLoaded = true;
+          renderBreedChips(allBreeds);
+          return;
+        }
+        // Cache corrupt — remove it.
+        localStorage.removeItem("sniff_tell_breeds");
+      }
+    } catch { /* ignore localStorage errors */ }
+
+    try {
+      const res = await fetch("Dog_List.txt");
+      if (!res.ok) throw new Error(`Could not load breed list (${res.status})`);
+      const text = await res.text();
+      // SECURITY: Limit each breed entry to sensible length and strip any markup.
+      allBreeds = text.split("\n")
+        .map(l => sanitiseText(l.trim()))
+        .filter(b => b.length > 0 && b.length <= 120);
+      breedsLoaded = true;
+      renderBreedChips(allBreeds);
+      try { localStorage.setItem("sniff_tell_breeds", JSON.stringify(allBreeds)); } catch { /* quota exceeded */ }
+    } catch (err) {
+      // SECURITY: Show a generic message; don't leak internal details.
+      breedsLoading.textContent = "⚠️ Could not load breed list. Please try again later.";
+    }
+  }
+
+  function renderBreedChips(breeds) {
+    breedsGrid.innerHTML = "";
+    breeds.forEach(breed => {
+      const el = document.createElement("div");
+      el.className = "breed-chip";
+      el.setAttribute("role", "listitem");
+      // SECURITY: Use textContent, not innerHTML, for all breed data from the server.
+      const paw  = document.createElement("span");
+      paw.className = "bc-paw";
+      paw.setAttribute("aria-hidden", "true");
+      paw.textContent = "🐾";
+      const name = document.createElement("span");
+      name.textContent = breed;
+      el.appendChild(paw);
+      el.appendChild(name);
+      el.dataset.name = breed.toLowerCase();
+      breedsGrid.appendChild(el);
+    });
+    updateMeta(breeds.length, allBreeds.length);
+    bpCount.textContent = allBreeds.length;
+  }
+
+  function updateMeta(shown, total) {
+    breedsMeta.textContent = shown === total
+      ? `${total} breeds available`
+      : `Showing ${shown} of ${total} breeds`;
+  }
+
+  breedSearch.addEventListener("input", () => {
+    // SECURITY: Search the internal breed list only; never reflect raw user input into innerHTML.
+    const q = breedSearch.value.trim().toLowerCase().slice(0, 100);
+    const chips = breedsGrid.querySelectorAll(".breed-chip");
+    let visible = 0;
+    chips.forEach(el => {
+      const match = !q || el.dataset.name.includes(q);
+      el.classList.toggle("hidden", !match);
+      if (match) visible++;
+    });
+    updateMeta(visible, allBreeds.length);
+    const noMatch = visible === 0 && q.length > 0;
+    breedsEmpty.style.display = noMatch ? "block" : "none";
+    breedsGrid.style.display  = noMatch ? "none"  : "";
+    // SECURITY: Use textContent, not innerHTML, to display search term.
+    emptyQuery.textContent = breedSearch.value.trim().slice(0, 80);
+  });
+
+  // ── UPLOAD ────────────────────────────────────────────────
+  dropZone.addEventListener("click", e => {
+    if (e.target === clearBtn) return;
+    fileInput.click();
+  });
+  dropZone.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInput.click(); }
+  });
   dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
   dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
   dropZone.addEventListener("drop", e => {
@@ -458,157 +1280,326 @@
     if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
   });
   fileInput.addEventListener("change", () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
-  clearBtn.addEventListener("click", resetUpload);
+  clearBtn.addEventListener("click", e => { e.stopPropagation(); resetUpload(); });
 
   function loadFile(file) {
-    if (!file.type.startsWith("image/")) {
-      showError(uploadError, "Please upload an image file (JPG, PNG, WebP…)");
+    // SECURITY: Validate file type against an allowlist (MIME type).
+    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+      showError(uploadError, "Please upload a valid image file (JPG, PNG, WebP, or GIF).");
       return;
     }
+    // SECURITY: Enforce file size limit to prevent large payload abuse.
+    if (file.size > MAX_FILE_BYTES) {
+      showError(uploadError, "Image is too large. Please use a photo under 10 MB.");
+      return;
+    }
+
     selectedFile = file;
-    previewImg.src = URL.createObjectURL(file);
-    previewWrap.style.display = "block";
+
+    // SECURITY: Revoke any previous object URL to free memory and prevent reuse.
+    if (currentPreviewURL) {
+      URL.revokeObjectURL(currentPreviewURL);
+    }
+    currentPreviewURL = URL.createObjectURL(file);
+    previewImg.src = currentPreviewURL;
+    previewImg.alt = "Uploaded dog photo — awaiting breed identification";
+
+    uploadPrompt.style.display = "none";
+    previewWrap.style.display  = "block";
+    dropZone.classList.add("has-image");
+
     classifyBtn.disabled = false;
     clearError(uploadError);
-    hideCard(cardResults);
-    hideCard(cardAsk);
-    hideCard(cardAnswer);
+    hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
     setStep(1);
   }
 
   function resetUpload() {
     selectedFile = null;
+    // SECURITY: Revoke object URL on reset to free memory.
+    if (currentPreviewURL) {
+      URL.revokeObjectURL(currentPreviewURL);
+      currentPreviewURL = null;
+    }
     previewImg.src = "";
-    previewWrap.style.display = "none";
+
+    uploadPrompt.style.display = "";
+    previewWrap.style.display  = "none";
+    dropZone.classList.remove("has-image");
+
     classifyBtn.disabled = true;
     fileInput.value = "";
     clearError(uploadError);
-    hideCard(cardResults);
-    hideCard(cardAsk);
-    hideCard(cardAnswer);
+    hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
     setStep(1);
   }
 
+  // ── CLASSIFY ──────────────────────────────────────────────
   classifyBtn.addEventListener("click", async () => {
     if (!selectedFile) return;
+
+    // SECURITY: Rate-limit classify calls — max 5 per 60 s.
+    if (!rateLimiter.check("classify", 5, 60_000)) {
+      showError(uploadError, "Too many requests. Please wait a moment before trying again.");
+      return;
+    }
+
     setLoading(classifyBtn, true, "Sniffing…");
     clearError(uploadError);
-    hideCard(cardResults);
-    hideCard(cardAsk);
-    hideCard(cardAnswer);
+    hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
+
     try {
       const fd = new FormData();
       fd.append("file", selectedFile);
-      const res = await fetch(`${CLASSIFIER_URL}/predict/`, { method: "POST", body: fd });
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+      // SECURITY: Use credentials:"omit" to prevent cookies being sent cross-origin.
+      const res = await fetch(`${CLASSIFIER_ORIGIN}/predict/`, {
+        method:      "POST",
+        body:        fd,
+        credentials: "omit",
+        mode:        "cors",
+      });
+
+      if (!res.ok) throw new Error(`classifier_error_${res.status}`);
+
       const data = await res.json();
+
+      // SECURITY: Validate the response shape before rendering.
+      if (!validatePredictions(data)) {
+        throw new Error("unexpected_response_shape");
+      }
+
       renderPredictions(data.predictions);
-      showCard(cardResults);
-      setStep(2);
+      showCard(cardResults); setStep(2);
       cardResults.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
-      showError(uploadError, `Classification failed: ${err.message}`);
+      // SECURITY: Show a generic user-facing message; log technical detail to console only.
+      console.error("[classify]", err.message);
+      showError(uploadError, "Breed identification failed. Please try again in a moment.");
     } finally {
       setLoading(classifyBtn, false, "🔍 Identify Breed");
     }
   });
 
   function renderPredictions(preds) {
-    predList.innerHTML = "";
-    selectedBreed = null;
-    selectBtn.disabled = true;
+    predList.innerHTML = ""; selectedBreed = null; selectBtn.disabled = true;
     const medals = ["🥇","🥈","🥉"];
+
     preds.forEach((p, i) => {
       const pct  = Math.round(p.probability * 100);
       const item = document.createElement("label");
       item.className = "pred-item";
-      item.innerHTML = `
-        <input type="radio" name="breed" value="${i}" />
-        <div class="pred-rank">${medals[i] || i+1}</div>
-        <div class="pred-label-wrap">
-          <div class="pred-name">${p.display_name}</div>
-          <div class="pred-bar-wrap"><div class="pred-bar" style="width:${pct}%"></div></div>
-        </div>
-        <div class="pred-pct">${pct}%</div>
-      `;
+
+      // SECURITY: Build the prediction item entirely via DOM APIs — never via innerHTML
+      // with server-provided strings, which would be an XSS vector.
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "breed";
+      radio.value = String(i);
+
+      const rankEl = document.createElement("div");
+      rankEl.className = "pred-rank";
+      rankEl.setAttribute("aria-hidden", "true");
+      rankEl.textContent = medals[i] || String(i + 1);
+
+      const labelWrap = document.createElement("div");
+      labelWrap.className = "pred-label-wrap";
+
+      const nameEl = document.createElement("div");
+      nameEl.className = "pred-name";
+      // SECURITY: textContent prevents XSS from server-supplied breed names.
+      nameEl.textContent = sanitiseText(p.display_name);
+
+      const barWrap = document.createElement("div");
+      barWrap.className = "pred-bar-wrap";
+
+      const bar = document.createElement("div");
+      bar.className = "pred-bar";
+      bar.style.width = `${pct}%`;
+      bar.setAttribute("role", "progressbar");
+      bar.setAttribute("aria-valuenow", pct);
+      bar.setAttribute("aria-valuemin", "0");
+      bar.setAttribute("aria-valuemax", "100");
+      bar.setAttribute("aria-label", `${pct}% confidence`);
+
+      barWrap.appendChild(bar);
+      labelWrap.appendChild(nameEl);
+      labelWrap.appendChild(barWrap);
+
+      const pctEl = document.createElement("div");
+      pctEl.className = "pred-pct";
+      pctEl.textContent = `${pct}%`;
+
+      item.appendChild(radio);
+      item.appendChild(rankEl);
+      item.appendChild(labelWrap);
+      item.appendChild(pctEl);
+
       item.addEventListener("click", () => {
         document.querySelectorAll(".pred-item").forEach(el => el.classList.remove("selected"));
         item.classList.add("selected");
         selectedBreed = p;
         selectBtn.disabled = false;
       });
+
       predList.appendChild(item);
     });
   }
 
   selectBtn.addEventListener("click", () => {
     if (!selectedBreed) return;
-    qaBreedName.textContent = selectedBreed.display_name;
-    questionInput.value = "";
-    askBtn.disabled = true;
-    clearError(askError);
-    hideCard(cardAnswer);
-    showCard(cardAsk);
-    setStep(3);
+    // SECURITY: Use textContent — breed name comes from the API.
+    qaBreedName.textContent = sanitiseText(selectedBreed.display_name);
+    questionInput.value = ""; askBtn.disabled = true;
+    clearError(askError); hideCard(cardAnswer);
+    showCard(cardAsk); setStep(3);
     cardAsk.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   questionInput.addEventListener("input", () => {
-    askBtn.disabled = questionInput.value.trim().length < 3;
+    const len = questionInput.value.trim().length;
+    askBtn.disabled = len < 3 || len > MAX_QUESTION_LENGTH;
   });
 
+  // ── ASK ───────────────────────────────────────────────────
   askBtn.addEventListener("click", async () => {
     const question = questionInput.value.trim();
     if (!question || !selectedBreed) return;
+
+    // SECURITY: Enforce length constraint before sending.
+    if (question.length > MAX_QUESTION_LENGTH) {
+      showError(askError, `Question must be under ${MAX_QUESTION_LENGTH} characters.`);
+      return;
+    }
+
+    // SECURITY: Rate-limit ask calls — max 10 per 60 s.
+    if (!rateLimiter.check("ask", 10, 60_000)) {
+      showError(askError, "Too many requests. Please wait a moment before trying again.");
+      return;
+    }
+
     setLoading(askBtn, true, "Fetching treats…");
-    clearError(askError);
-    hideCard(cardAnswer);
+    clearError(askError); hideCard(cardAnswer);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), RAG_TIMEOUT_MS);
+
     try {
-      const res = await fetch(`${RAG_URL}/ask/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dog_breed: selectedBreed.breed, question }),
+      const res = await fetch(`${RAG_ORIGIN}/ask/`, {
+        method:      "POST",
+        headers:     { "Content-Type": "application/json" },
+        credentials: "omit",
+        mode:        "cors",
+        signal:      controller.signal,
+        body:        JSON.stringify({
+          // SECURITY: Only send the breed identifier and the question — nothing else.
+          dog_breed: selectedBreed.breed,
+          question,
+        }),
       });
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      clearTimeout(timer);
+
+      if (!res.ok) throw new Error(`rag_error_${res.status}`);
+
       const data = await res.json();
-      answerText.textContent = data.response;
-      showCard(cardAnswer);
-      setStep(4);
+
+      // SECURITY: Validate response shape before trusting any field.
+      if (!validateAskResponse(data)) {
+        throw new Error("unexpected_response_shape");
+      }
+
+      // SECURITY: Use textContent — the response comes from the API and must not be treated as HTML.
+      answerText.textContent = sanitiseText(data.response);
+      setSourceBadge(data.source);
+      showCard(cardAnswer); setStep(4);
       cardAnswer.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
-      showError(askError, `Something went wrong: ${err.message}`);
+      clearTimeout(timer);
+      console.error("[ask]", err.message);
+      // SECURITY: All errors shown to the user are generic — technical details go to console only.
+      if (err.name === "AbortError") {
+        showError(askError,
+          "The request timed out. The server may still be starting up.",
+          "Hugging Face Spaces can take ~30 seconds on a cold start. Please wait a moment and try again.");
+      } else if (/failed to fetch|networkerror|network request failed/i.test(err.message)) {
+        showError(askError,
+          "Network error — couldn't reach the knowledge server.",
+          "Check your internet connection and try again.");
+      } else {
+        showError(askError, "Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(askBtn, false, "Ask! 🐾");
     }
   });
 
+  // ── SOURCE BADGE ──────────────────────────────────────────
+  const ALLOWED_SOURCES = new Set(["vector", "tavily", "blocked"]);
+  const SOURCE_CFG = {
+    vector:  { cls:"source-vector",  label:"📚 From knowledge base" },
+    tavily:  { cls:"source-tavily",  label:"🌐 From web search"     },
+    blocked: { cls:"source-blocked", label:"🚫 Query not allowed"   },
+  };
+
+  function setSourceBadge(source) {
+    sourceBadge.classList.remove("hidden","source-vector","source-tavily","source-blocked");
+    // SECURITY: Only accept known source values; fall back to "tavily" for anything unexpected.
+    const safeSource = ALLOWED_SOURCES.has(source) ? source : "tavily";
+    const cfg = SOURCE_CFG[safeSource];
+    sourceBadge.classList.add(cfg.cls);
+    // SECURITY: Use textContent — label is from our own constant, but good habit regardless.
+    sourceLabel.textContent = cfg.label;
+  }
+
+  // ── ANSWER ACTIONS ────────────────────────────────────────
   askAnotherBtn.addEventListener("click", () => {
-    hideCard(cardAnswer);
-    questionInput.value = "";
-    askBtn.disabled = true;
-    setStep(3);
-    questionInput.focus();
+    hideCard(cardAnswer); questionInput.value = ""; askBtn.disabled = true;
+    setStep(3); questionInput.focus();
     cardAsk.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   startOverBtn.addEventListener("click", () => {
-    resetUpload();
-    hideCard(cardResults);
-    hideCard(cardAsk);
-    hideCard(cardAnswer);
+    resetUpload(); hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
+  // ── HELPERS ───────────────────────────────────────────────
   function showCard(el) { el.classList.remove("hidden"); }
   function hideCard(el) { el.classList.add("hidden"); }
 
-  function setLoading(btn, loading, label) {
-    btn.disabled = loading;
-    btn.innerHTML = loading ? `<span class="spinner"></span>${label}` : label;
+  function setLoading(btn, on, label) {
+    btn.disabled = on;
+    if (on) {
+      // SECURITY: Build loading state via DOM, not innerHTML with interpolated strings.
+      btn.textContent = "";
+      const spinner = document.createElement("span");
+      spinner.className = "spinner";
+      spinner.setAttribute("aria-hidden", "true");
+      btn.appendChild(spinner);
+      btn.appendChild(document.createTextNode(label));
+    } else {
+      btn.textContent = label;
+    }
   }
 
-  function showError(el, msg) { el.innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`; }
-  function clearError(el)     { el.innerHTML = ""; }
+  function showError(el, msg, hint = "") {
+    // SECURITY: Build error elements via DOM APIs — msg/hint are our own strings,
+    // but never reflect raw API or user input as HTML.
+    el.innerHTML = "";
+    const wrapper = document.createElement("div");
+    wrapper.className = "error-msg";
+    wrapper.setAttribute("role", "alert");
+    wrapper.textContent = `⚠️ ${msg}`;
+    if (hint) {
+      const hintEl = document.createElement("span");
+      hintEl.className = "error-hint";
+      hintEl.textContent = hint;
+      wrapper.appendChild(hintEl);
+    }
+    el.appendChild(wrapper);
+  }
+
+  function clearError(el) { el.innerHTML = ""; }
 </script>
 </body>
 </html>

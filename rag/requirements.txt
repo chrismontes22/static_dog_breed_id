@@ -1,8 +1,28 @@
-# Koyeb — RAG service
-# No torch, no sentence-transformers — Gemini handles both LLM and embeddings
-fastapi
-uvicorn[standard]
-google-generativeai
-duckduckgo-search
-numpy
-python-multipart
+# Sniff & Tell — RAG backend dependencies
+# Targeting Hugging Face Spaces (Docker)
+
+# Web server
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+
+# Vector store
+# chromadb pulls in hnswlib (compiled) — keep Python 3.11 in your Dockerfile
+chromadb>=0.5.0
+
+# Embeddings (current: local sentence-transformers)
+# When you switch to Google embeddings, you can remove sentence-transformers
+# and torch; google-genai (already listed) handles it.
+sentence-transformers>=3.0.0
+# Use CPU-only torch to cut image size significantly (~800 MB → ~250 MB)
+torch>=2.3.0
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Google Gemini — unified SDK (matches reembed.py)
+google-genai>=1.5.0
+
+# Web search fallback
+tavily-python>=0.3.0
+
+# Data
+numpy>=1.26.0
+pydantic>=2.7.0

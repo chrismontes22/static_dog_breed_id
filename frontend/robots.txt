@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Static assets
+Allow: /Dog_List.txt
+Allow: /og-image.png
+Allow: /favicon.svg
+
+Sitemap: https://sniff-and-tell.pages.dev/sitemap.xml
