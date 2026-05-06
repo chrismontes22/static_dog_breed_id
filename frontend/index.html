@@ -605,6 +605,28 @@
     }
     .upload-zone.has-image:hover #preview-wrap .replace-hint { opacity: 1; }
 
+    /* ── Mobile: no hover exists, so show a persistent floating pill instead ── */
+    @media (max-width: 768px) {
+      #preview-wrap .replace-hint {
+        /* Override the full-width gradient overlay */
+        bottom: 10px; left: 50%; right: auto;
+        transform: translateX(-50%);
+        width: auto; white-space: nowrap;
+        /* Compact pill */
+        background: rgba(15,33,25,.65);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border-radius: 99px;
+        padding: .32rem .9rem;
+        font-size: .72rem; letter-spacing: .04em;
+        border: 1px solid rgba(255,255,255,.18);
+        /* Always visible — no hover needed */
+        opacity: 1;
+      }
+      /* Keep it hidden until an image is actually loaded */
+      .upload-zone:not(.has-image) #preview-wrap .replace-hint { opacity: 0; }
+    }
+
     .clear-btn {
       position: absolute; top: 8px; right: 8px;
       background: rgba(15,33,25,.7); color: #fff;
@@ -1271,7 +1293,9 @@
   let selectedBreed = null;
   let allBreeds     = [];
   let breedsLoaded  = false;
-  let currentPreviewURL = null;
+  // Tracks the active blob URL so we can revoke it only after the canvas draw
+  // completes — avoids the "broken image on replace" race condition.
+  let currentBlobURL = null;
 
   // ── STEP INDICATOR ────────────────────────────────────────
   function setStep(n) {
@@ -1371,6 +1395,9 @@
   // ── UPLOAD ────────────────────────────────────────────────
   dropZone.addEventListener("click", e => {
     if (e.target === clearBtn) return;
+    // Reset value first — ensures the `change` event fires on mobile even if
+    // the user picks the same file again (important for the "replace" flow).
+    fileInput.value = "";
     fileInput.click();
   });
   dropZone.addEventListener("keydown", e => {
@@ -1405,6 +1432,10 @@
 
   clearBtn.addEventListener("click", e => { e.stopPropagation(); resetUpload(); });
 
+  // MAX dimension for the *preview* render — keeps mobile layout fast.
+  // The original `selectedFile` is always sent to the API at full quality.
+  const PREVIEW_MAX_PX = 1200;
+
   function loadFile(file) {
     // SECURITY: Validate MIME type against an allowlist.
     if (!ALLOWED_MIME_TYPES.has(file.type)) {
@@ -1417,31 +1448,66 @@
       return;
     }
 
-    selectedFile = file;
+    selectedFile = file; // keep original at full quality for the API
 
-    // SECURITY: Revoke previous object URL to free memory.
-    if (currentPreviewURL) {
-      URL.revokeObjectURL(currentPreviewURL);
-    }
-    currentPreviewURL = URL.createObjectURL(file);
-    previewImg.src = currentPreviewURL;
-    previewImg.alt = "Uploaded dog photo — awaiting breed identification";
+    // Stash the previous blob URL — we revoke it only AFTER the new image has
+    // been decoded and drawn to canvas, preventing "broken image" flashes.
+    const prevBlobURL = currentBlobURL;
+    const blobURL     = URL.createObjectURL(file);
+    currentBlobURL    = blobURL;
 
-    uploadPrompt.style.display = "none";
-    previewWrap.style.display  = "block";
-    dropZone.classList.add("has-image");
+    const tempImg = new Image();
 
-    classifyBtn.disabled = false;
-    clearError(uploadError);
-    hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
-    setStep(1);
+    tempImg.onerror = () => {
+      // Clean up if this specific blob URL is still the active one.
+      URL.revokeObjectURL(blobURL);
+      if (currentBlobURL === blobURL) currentBlobURL = null;
+      showError(uploadError, "Could not load the image. Please try a different photo.");
+    };
+
+    tempImg.onload = () => {
+      // Safe to revoke the *previous* image's blob URL now.
+      if (prevBlobURL) URL.revokeObjectURL(prevBlobURL);
+
+      // Downsize for the preview canvas if needed.
+      let w = tempImg.naturalWidth  || tempImg.width;
+      let h = tempImg.naturalHeight || tempImg.height;
+      if (w > PREVIEW_MAX_PX || h > PREVIEW_MAX_PX) {
+        const ratio = Math.min(PREVIEW_MAX_PX / w, PREVIEW_MAX_PX / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width  = w;
+      canvas.height = h;
+      canvas.getContext("2d").drawImage(tempImg, 0, 0, w, h);
+
+      // Set the visible preview from the canvas (JPEG, 88% quality).
+      // Now that we've drawn to canvas, the blob URL is no longer needed.
+      previewImg.src = canvas.toDataURL("image/jpeg", 0.88);
+      URL.revokeObjectURL(blobURL);
+      if (currentBlobURL === blobURL) currentBlobURL = null;
+
+      previewImg.alt = "Uploaded dog photo — awaiting breed identification";
+      uploadPrompt.style.display = "none";
+      previewWrap.style.display  = "block";
+      dropZone.classList.add("has-image");
+
+      classifyBtn.disabled = false;
+      clearError(uploadError);
+      hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
+      setStep(1);
+    };
+
+    tempImg.src = blobURL;
   }
 
   function resetUpload() {
     selectedFile = null;
-    if (currentPreviewURL) {
-      URL.revokeObjectURL(currentPreviewURL);
-      currentPreviewURL = null;
+    // Revoke any lingering blob URL on full reset.
+    if (currentBlobURL) {
+      URL.revokeObjectURL(currentBlobURL);
+      currentBlobURL = null;
     }
     previewImg.src = "";
 
@@ -1451,7 +1517,7 @@
 
     classifyBtn.disabled = true;
     fileInput.value   = "";
-    cameraInput.value = ""; // ← also reset camera input
+    cameraInput.value = "";
     clearError(uploadError);
     hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
     setStep(1);
