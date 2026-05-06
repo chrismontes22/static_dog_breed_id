@@ -500,21 +500,27 @@
       color: var(--ink-lt); font-size: .87rem; font-weight: 500;
     }
 
-    /* ══ UPLOAD ══ */
+    /* ══ UPLOAD ZONE — bigger & more prominent ══ */
     .upload-zone {
-      border: 2.5px dashed var(--border-dk); border-radius: var(--radius-sm);
+      border: 3px dashed var(--forest-lt);
+      border-radius: var(--radius-sm);
       text-align: center; cursor: pointer;
-      transition: border-color .2s, background .2s, transform .2s;
-      background: var(--mint-bg);
+      transition: border-color .2s, background .2s, transform .2s, box-shadow .2s;
+      background: linear-gradient(160deg, var(--mint-bg) 0%, #e4f4ec 100%);
       position: relative;
       overflow: hidden;
-      min-height: 200px;
+      /* ↑ taller, grabs attention */
+      min-height: 280px;
       display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 24px rgba(46,94,71,.10), inset 0 1px 0 rgba(255,255,255,.8);
     }
     .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--forest-lt); background: var(--mint-lt); transform: scale(1.01);
+      border-color: var(--gold);
+      background: linear-gradient(160deg, var(--mint-lt) 0%, #d8f0e6 100%);
+      transform: scale(1.015);
+      box-shadow: 0 8px 32px rgba(46,94,71,.15), inset 0 1px 0 rgba(255,255,255,.9);
     }
-    .upload-zone.has-image:hover { transform: none; }
+    .upload-zone.has-image:hover { transform: none; box-shadow: var(--shadow-sm); }
     .upload-zone.has-image {
       background: #000;
       border-style: solid;
@@ -524,21 +530,58 @@
     .upload-zone input { display: none; }
 
     #upload-prompt {
-      padding: 2.4rem 1rem 2rem;
+      /* more generous padding to fill the larger zone */
+      padding: 2.8rem 1.5rem 2.4rem;
       display: flex; flex-direction: column; align-items: center;
     }
     .dog-icon {
-      font-size: 3.2rem; line-height: 1; margin-bottom: .6rem; display: block;
+      /* bigger icon */
+      font-size: 5rem;
+      line-height: 1; margin-bottom: .9rem; display: block;
       animation: sniff 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 4px 10px rgba(46,94,71,.18));
     }
-    @keyframes sniff { 0%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}60%{transform:translateY(-3px)} }
-    .upload-text { color: var(--ink-mid); font-size: .92rem; font-weight: 500; }
+    @keyframes sniff { 0%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)} }
+
+    .upload-title {
+      font-family: 'Abril Fatface', serif;
+      font-size: 1.35rem;
+      color: var(--forest);
+      margin-bottom: .45rem;
+      letter-spacing: .01em;
+    }
+    .upload-text {
+      color: var(--ink-mid); font-size: .97rem; font-weight: 500;
+      line-height: 1.55;
+    }
     .upload-text strong { color: var(--forest-lt); font-weight: 700; }
     .upload-formats {
-      margin-top: .45rem;
-      font-size: .73rem; font-weight: 600; color: var(--ink-lt);
+      margin-top: .6rem;
+      font-size: .75rem; font-weight: 600; color: var(--ink-lt);
       letter-spacing: .05em;
+      background: rgba(255,255,255,.6);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      padding: .2rem .75rem;
+      display: inline-block;
     }
+
+    /* subtle corner pawprints for visual flair */
+    .upload-zone::before {
+      content: '🐾';
+      position: absolute; bottom: 14px; right: 16px;
+      font-size: 1.4rem; opacity: .12; pointer-events: none;
+      transform: rotate(15deg);
+    }
+    .upload-zone::after {
+      content: '🐾';
+      position: absolute; top: 14px; left: 14px;
+      font-size: 1.1rem; opacity: .10; pointer-events: none;
+      transform: rotate(-20deg);
+    }
+    /* has-image state resets the pseudo-elements */
+    .upload-zone.has-image::before,
+    .upload-zone.has-image::after { display: none; }
 
     #preview-wrap {
       display: none;
@@ -572,6 +615,57 @@
       z-index: 2;
     }
     .clear-btn:hover { background: var(--ink); }
+
+    /* ══ MOBILE CAMERA OPTION ══ */
+    /*
+      Only shown on touch/mobile screens.
+      Uses a real <input capture="environment"> so the OS camera app opens directly.
+    */
+    .camera-divider {
+      display: none; /* hidden on desktop */
+      align-items: center; gap: .75rem;
+      margin: .9rem 0 0;
+      color: var(--ink-lt); font-size: .8rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+    .camera-divider::before,
+    .camera-divider::after {
+      content: ''; flex: 1; height: 1.5px;
+      background: var(--border);
+    }
+
+    #camera-input { display: none; }
+
+    .btn-camera {
+      display: none; /* hidden on desktop */
+      width: 100%;
+      padding: .95rem 1rem;
+      background: var(--white);
+      border: 2.5px solid var(--forest-lt);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--forest);
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 3px 0 var(--mint-mid);
+      text-align: center;
+      letter-spacing: .01em;
+    }
+    .btn-camera:hover:not(:disabled) {
+      background: var(--mint-bg);
+      border-color: var(--forest);
+      box-shadow: 0 1px 0 var(--mint-mid);
+      transform: translateY(2px);
+    }
+    .btn-camera:active:not(:disabled) { transform: translateY(3px); box-shadow: none; }
+    .btn-camera:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* Show camera UI only on screens ≤ 768 px (touch / mobile) */
+    @media (max-width: 768px) {
+      .camera-divider { display: flex; }
+      .btn-camera     { display: block; }
+    }
 
     /* ══ BUTTONS ══ */
     .btn {
@@ -874,14 +968,17 @@
       </div>
     </div>
 
+    <!-- Drop zone (desktop) / tap-to-browse (mobile) -->
     <div class="upload-zone" id="drop-zone"
          role="button" tabindex="0"
          aria-label="Drop your dog photo here or click to browse">
+      <!-- Standard file picker (all devices, no camera) -->
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Choose dog photo" />
 
       <div id="upload-prompt">
         <span class="dog-icon" aria-hidden="true">🐶</span>
-        <p class="upload-text">Drop your dog's photo here,<br>or <strong>tap to browse</strong></p>
+        <p class="upload-title">Drop your dog's photo</p>
+        <p class="upload-text">or <strong>tap to browse your gallery</strong></p>
         <p class="upload-formats">JPG · PNG · WebP · GIF &nbsp;·&nbsp; Max 10 MB</p>
       </div>
 
@@ -891,6 +988,23 @@
         <button class="clear-btn" id="clear-btn" aria-label="Remove image" type="button">✕</button>
       </div>
     </div>
+
+    <!--
+      ══ MOBILE-ONLY CAMERA BUTTON ══
+      Shown only on screens ≤ 768 px via CSS.
+      `capture="environment"` asks the OS to open the rear camera directly.
+      Falls back to the photo picker on devices that don't support capture.
+    -->
+    <div class="camera-divider" aria-hidden="true">or</div>
+    <!-- Hidden camera input — capture="environment" opens the rear/main camera -->
+    <input type="file" id="camera-input"
+           accept="image/jpeg,image/png,image/webp"
+           capture="environment"
+           aria-label="Take a photo with your camera" />
+    <button class="btn-camera" id="camera-btn" type="button"
+            aria-label="Open camera to take a photo of your dog">
+      📷 &nbsp;Take a Photo
+    </button>
 
     <!-- Privacy notice -->
     <div class="privacy-notice" role="note" aria-label="Privacy information">
@@ -1064,7 +1178,6 @@
   const rateLimiter = (() => {
     const windows = {};
     return {
-      // Returns true if the action is allowed; false if rate-limited.
       check(key, maxCalls, windowMs) {
         const now  = Date.now();
         const hits = (windows[key] || []).filter(t => now - t < windowMs);
@@ -1076,16 +1189,14 @@
   })();
 
   // SECURITY: Sanitise any string before inserting as text content.
-  // Uses the browser's own text node encoding — no custom regex needed.
   function sanitiseText(str) {
     if (typeof str !== "string") return "";
     const el = document.createElement("span");
     el.textContent = str;
-    return el.textContent; // round-trip through textContent strips all markup
+    return el.textContent;
   }
 
-  // SECURITY: Validate that a response object has the expected shape
-  // before touching any of its fields.
+  // SECURITY: Validate that a response object has the expected shape.
   function validatePredictions(data) {
     if (!data || !Array.isArray(data.predictions)) return false;
     if (data.predictions.length === 0 || data.predictions.length > 10) return false;
@@ -1105,8 +1216,6 @@
   }
 
   // ── SERVER WARM-UP PINGS ──────────────────────────────────
-  // SECURITY: Use no-cors + credentials:omit — prevents credential leakage,
-  // and the ping is only for UX (server warm-up), not for reading data.
   async function pingServer(url, dotId, labelId) {
     const dot   = document.getElementById(dotId);
     const label = document.getElementById(labelId);
@@ -1126,6 +1235,8 @@
   // ── DOM REFS ──────────────────────────────────────────────
   const dropZone      = document.getElementById("drop-zone");
   const fileInput     = document.getElementById("file-input");
+  const cameraInput   = document.getElementById("camera-input");   // ← NEW
+  const cameraBtn     = document.getElementById("camera-btn");     // ← NEW
   const uploadPrompt  = document.getElementById("upload-prompt");
   const previewWrap   = document.getElementById("preview-wrap");
   const previewImg    = document.getElementById("preview-img");
@@ -1160,7 +1271,6 @@
   let selectedBreed = null;
   let allBreeds     = [];
   let breedsLoaded  = false;
-  // Track active object URL so we can revoke it and avoid memory leaks.
   let currentPreviewURL = null;
 
   // ── STEP INDICATOR ────────────────────────────────────────
@@ -1189,7 +1299,6 @@
     try {
       const cached = localStorage.getItem("sniff_tell_breeds");
       if (cached) {
-        // SECURITY: Validate cached data before using it.
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.every(b => typeof b === "string" && b.length <= 120)) {
           allBreeds    = parsed;
@@ -1197,7 +1306,6 @@
           renderBreedChips(allBreeds);
           return;
         }
-        // Cache corrupt — remove it.
         localStorage.removeItem("sniff_tell_breeds");
       }
     } catch { /* ignore localStorage errors */ }
@@ -1206,7 +1314,6 @@
       const res = await fetch("Dog_List.txt");
       if (!res.ok) throw new Error(`Could not load breed list (${res.status})`);
       const text = await res.text();
-      // SECURITY: Limit each breed entry to sensible length and strip any markup.
       allBreeds = text.split("\n")
         .map(l => sanitiseText(l.trim()))
         .filter(b => b.length > 0 && b.length <= 120);
@@ -1214,7 +1321,6 @@
       renderBreedChips(allBreeds);
       try { localStorage.setItem("sniff_tell_breeds", JSON.stringify(allBreeds)); } catch { /* quota exceeded */ }
     } catch (err) {
-      // SECURITY: Show a generic message; don't leak internal details.
       breedsLoading.textContent = "⚠️ Could not load breed list. Please try again later.";
     }
   }
@@ -1225,7 +1331,6 @@
       const el = document.createElement("div");
       el.className = "breed-chip";
       el.setAttribute("role", "listitem");
-      // SECURITY: Use textContent, not innerHTML, for all breed data from the server.
       const paw  = document.createElement("span");
       paw.className = "bc-paw";
       paw.setAttribute("aria-hidden", "true");
@@ -1248,7 +1353,6 @@
   }
 
   breedSearch.addEventListener("input", () => {
-    // SECURITY: Search the internal breed list only; never reflect raw user input into innerHTML.
     const q = breedSearch.value.trim().toLowerCase().slice(0, 100);
     const chips = breedsGrid.querySelectorAll(".breed-chip");
     let visible = 0;
@@ -1261,7 +1365,6 @@
     const noMatch = visible === 0 && q.length > 0;
     breedsEmpty.style.display = noMatch ? "block" : "none";
     breedsGrid.style.display  = noMatch ? "none"  : "";
-    // SECURITY: Use textContent, not innerHTML, to display search term.
     emptyQuery.textContent = breedSearch.value.trim().slice(0, 80);
   });
 
@@ -1279,16 +1382,36 @@
     e.preventDefault(); dropZone.classList.remove("drag-over");
     if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
   });
-  fileInput.addEventListener("change", () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+  // Standard gallery picker
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files[0]) loadFile(fileInput.files[0]);
+  });
+
+  // ── MOBILE CAMERA ────────────────────────────────────────
+  // The button triggers the hidden camera input.
+  // `capture="environment"` on the input tells the OS to open the rear camera.
+  // On devices / browsers that don't support `capture`, it falls back to the
+  // normal photo picker — perfectly graceful.
+  cameraBtn.addEventListener("click", () => {
+    // Reset the value so the change event fires even if the same photo is retaken
+    cameraInput.value = "";
+    cameraInput.click();
+  });
+
+  cameraInput.addEventListener("change", () => {
+    if (cameraInput.files[0]) loadFile(cameraInput.files[0]);
+  });
+
   clearBtn.addEventListener("click", e => { e.stopPropagation(); resetUpload(); });
 
   function loadFile(file) {
-    // SECURITY: Validate file type against an allowlist (MIME type).
+    // SECURITY: Validate MIME type against an allowlist.
     if (!ALLOWED_MIME_TYPES.has(file.type)) {
       showError(uploadError, "Please upload a valid image file (JPG, PNG, WebP, or GIF).");
       return;
     }
-    // SECURITY: Enforce file size limit to prevent large payload abuse.
+    // SECURITY: Enforce file size limit.
     if (file.size > MAX_FILE_BYTES) {
       showError(uploadError, "Image is too large. Please use a photo under 10 MB.");
       return;
@@ -1296,7 +1419,7 @@
 
     selectedFile = file;
 
-    // SECURITY: Revoke any previous object URL to free memory and prevent reuse.
+    // SECURITY: Revoke previous object URL to free memory.
     if (currentPreviewURL) {
       URL.revokeObjectURL(currentPreviewURL);
     }
@@ -1316,7 +1439,6 @@
 
   function resetUpload() {
     selectedFile = null;
-    // SECURITY: Revoke object URL on reset to free memory.
     if (currentPreviewURL) {
       URL.revokeObjectURL(currentPreviewURL);
       currentPreviewURL = null;
@@ -1328,7 +1450,8 @@
     dropZone.classList.remove("has-image");
 
     classifyBtn.disabled = true;
-    fileInput.value = "";
+    fileInput.value   = "";
+    cameraInput.value = ""; // ← also reset camera input
     clearError(uploadError);
     hideCard(cardResults); hideCard(cardAsk); hideCard(cardAnswer);
     setStep(1);
@@ -1338,7 +1461,6 @@
   classifyBtn.addEventListener("click", async () => {
     if (!selectedFile) return;
 
-    // SECURITY: Rate-limit classify calls — max 5 per 60 s.
     if (!rateLimiter.check("classify", 5, 60_000)) {
       showError(uploadError, "Too many requests. Please wait a moment before trying again.");
       return;
@@ -1352,7 +1474,6 @@
       const fd = new FormData();
       fd.append("file", selectedFile);
 
-      // SECURITY: Use credentials:"omit" to prevent cookies being sent cross-origin.
       const res = await fetch(`${CLASSIFIER_ORIGIN}/predict/`, {
         method:      "POST",
         body:        fd,
@@ -1364,7 +1485,6 @@
 
       const data = await res.json();
 
-      // SECURITY: Validate the response shape before rendering.
       if (!validatePredictions(data)) {
         throw new Error("unexpected_response_shape");
       }
@@ -1373,7 +1493,6 @@
       showCard(cardResults); setStep(2);
       cardResults.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
-      // SECURITY: Show a generic user-facing message; log technical detail to console only.
       console.error("[classify]", err.message);
       showError(uploadError, "Breed identification failed. Please try again in a moment.");
     } finally {
@@ -1390,8 +1509,6 @@
       const item = document.createElement("label");
       item.className = "pred-item";
 
-      // SECURITY: Build the prediction item entirely via DOM APIs — never via innerHTML
-      // with server-provided strings, which would be an XSS vector.
       const radio = document.createElement("input");
       radio.type = "radio";
       radio.name = "breed";
@@ -1407,7 +1524,6 @@
 
       const nameEl = document.createElement("div");
       nameEl.className = "pred-name";
-      // SECURITY: textContent prevents XSS from server-supplied breed names.
       nameEl.textContent = sanitiseText(p.display_name);
 
       const barWrap = document.createElement("div");
@@ -1448,7 +1564,6 @@
 
   selectBtn.addEventListener("click", () => {
     if (!selectedBreed) return;
-    // SECURITY: Use textContent — breed name comes from the API.
     qaBreedName.textContent = sanitiseText(selectedBreed.display_name);
     questionInput.value = ""; askBtn.disabled = true;
     clearError(askError); hideCard(cardAnswer);
@@ -1466,13 +1581,11 @@
     const question = questionInput.value.trim();
     if (!question || !selectedBreed) return;
 
-    // SECURITY: Enforce length constraint before sending.
     if (question.length > MAX_QUESTION_LENGTH) {
       showError(askError, `Question must be under ${MAX_QUESTION_LENGTH} characters.`);
       return;
     }
 
-    // SECURITY: Rate-limit ask calls — max 10 per 60 s.
     if (!rateLimiter.check("ask", 10, 60_000)) {
       showError(askError, "Too many requests. Please wait a moment before trying again.");
       return;
@@ -1492,7 +1605,6 @@
         mode:        "cors",
         signal:      controller.signal,
         body:        JSON.stringify({
-          // SECURITY: Only send the breed identifier and the question — nothing else.
           dog_breed: selectedBreed.breed,
           question,
         }),
@@ -1503,12 +1615,10 @@
 
       const data = await res.json();
 
-      // SECURITY: Validate response shape before trusting any field.
       if (!validateAskResponse(data)) {
         throw new Error("unexpected_response_shape");
       }
 
-      // SECURITY: Use textContent — the response comes from the API and must not be treated as HTML.
       answerText.textContent = sanitiseText(data.response);
       setSourceBadge(data.source);
       showCard(cardAnswer); setStep(4);
@@ -1516,7 +1626,6 @@
     } catch (err) {
       clearTimeout(timer);
       console.error("[ask]", err.message);
-      // SECURITY: All errors shown to the user are generic — technical details go to console only.
       if (err.name === "AbortError") {
         showError(askError,
           "The request timed out. The server may still be starting up.",
@@ -1543,11 +1652,9 @@
 
   function setSourceBadge(source) {
     sourceBadge.classList.remove("hidden","source-vector","source-tavily","source-blocked");
-    // SECURITY: Only accept known source values; fall back to "tavily" for anything unexpected.
     const safeSource = ALLOWED_SOURCES.has(source) ? source : "tavily";
     const cfg = SOURCE_CFG[safeSource];
     sourceBadge.classList.add(cfg.cls);
-    // SECURITY: Use textContent — label is from our own constant, but good habit regardless.
     sourceLabel.textContent = cfg.label;
   }
 
@@ -1570,7 +1677,6 @@
   function setLoading(btn, on, label) {
     btn.disabled = on;
     if (on) {
-      // SECURITY: Build loading state via DOM, not innerHTML with interpolated strings.
       btn.textContent = "";
       const spinner = document.createElement("span");
       spinner.className = "spinner";
@@ -1583,8 +1689,6 @@
   }
 
   function showError(el, msg, hint = "") {
-    // SECURITY: Build error elements via DOM APIs — msg/hint are our own strings,
-    // but never reflect raw API or user input as HTML.
     el.innerHTML = "";
     const wrapper = document.createElement("div");
     wrapper.className = "error-msg";
